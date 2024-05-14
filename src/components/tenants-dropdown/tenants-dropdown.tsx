@@ -18,7 +18,7 @@ const tenants = [
 ];
 
 export const TenantsDropdown = () => {
-  const [company, setCompany] = useState(tenants[0].value);
+  const [tenant, setTenant] = useState(tenants[0].value);
 
   return (
     <DropdownMenu>
@@ -28,22 +28,22 @@ export const TenantsDropdown = () => {
             "font-bold focus-visible:ring-0 focus-visible:ring-offset-0"
           )}
         >
-          {tenants.find((c) => c.value === company)?.title || ""}
+          {tenants.find((c) => c.value === tenant)?.title || ""}
           <ChevronDown size={16} className="ml-2" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end">
         <DropdownMenuRadioGroup
-          value={company}
-          onValueChange={(value) => setCompany(value)}
+          value={tenant}
+          onValueChange={(value) => setTenant(value)}
         >
-          {tenants.map((company) => (
+          {tenants.map((tenant) => (
             <DropdownMenuRadioItem
-              key={company.value}
-              value={company.value}
+              key={tenant.value}
+              value={tenant.value}
               className="py-2 cursor-pointer"
             >
-              {company.title}
+              {tenant.title}
             </DropdownMenuRadioItem>
           ))}
         </DropdownMenuRadioGroup>
