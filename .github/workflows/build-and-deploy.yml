@@ -22,7 +22,7 @@ jobs:
           node-version: 21
           cache: "npm"
       - run: npm install
-      - run: CI=false NODE_ENV=production VITE_UI_VERSION=${{github.run_number}} npm run build --mode production
+      - run: CI=false NODE_ENV=production VITE_UI_VERSION=${{github.run_number}} npm run build
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1-node16
         with:
