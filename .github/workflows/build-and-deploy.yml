@@ -21,6 +21,10 @@ jobs:
         with:
           node-version: 21
           cache: "npm"
+      - name: Extract branch name
+        shell: bash
+        run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+        id: extract_branch
       - run: npm install
       - run: CI=false NODE_ENV=production VITE_UI_VERSION=${{github.run_number}} npm run build
       - name: Configure AWS credentials
