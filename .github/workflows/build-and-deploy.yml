@@ -1,0 +1,65 @@
+# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Build and Deploy to AWS (DEV)
+on:
+  push:
+    branches: ["main","dev"]
+jobs:
+  build:
+    name: "Build and Deploy"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build with NPM
+        uses: actions/setup-node@v3
+        with:
+          node-version: 21
+          cache: "npm"
+      - run: npm install
+      - run: CI=false NODE_ENV=production VITE_UI_VERSION=${{github.run_number}} npm run build --mode production
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1-node16
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+      - name: Build the Docker image
+        id: build-image
+        run: |
+          docker build . --file Dockerfile --tag $IMAGE
+          docker push $IMAGE
+        env:
+          IMAGE: 502154089745.dkr.ecr.us-east-1.amazonaws.com/alfil/ui:${{ steps.extract_branch.outputs.branch }}-${{github.run_number}}
+      - name: Render Amazon ECS task definition
+        if: ${{ false }}
+        id: render-web-container
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ./.aws/task-definition_DEV.json
+          container-name: web-ui
+          image: 502154089745.dkr.ecr.us-east-1.amazonaws.com/alfil/ui:${{ steps.extract_branch.outputs.branch }}-${{github.run_number}}
+      - name: Deploy to Amazon ECS service
+        if: ${{ false }}
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.render-web-container.outputs.task-definition }}
+          service: alfil-dev-web-ui-service
+          cluster: alfil-dev
+          wait-for-service-stability: true
+      - name: Update UI Version
+        if: ${{ false }}
+        uses: gagoar/invoke-aws-lambda@master
+        with:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          FunctionName: UpdateUIVersionInDev
+          Payload: '{ "version": "${{github.run_number}}", "database_url": "url","database": "db" }'
