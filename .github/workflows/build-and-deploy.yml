@@ -42,7 +42,7 @@ jobs:
           docker build . --file Dockerfile --tag $IMAGE
           docker push $IMAGE
         env:
-          IMAGE: 502154089745.dkr.ecr.us-east-1.amazonaws.com/alfil/ui:${{ steps.extract_branch.outputs.branch }}-${{github.run_number}}
+          IMAGE: 502154089745.dkr.ecr.us-east-1.amazonaws.com/alfil/web-ui:${{ steps.extract_branch.outputs.branch }}-${{github.run_number}}
       - name: Render Amazon ECS task definition
         if: ${{ false }}
         id: render-web-container
@@ -50,7 +50,7 @@ jobs:
         with:
           task-definition: ./.aws/task-definition_DEV.json
           container-name: web-ui
-          image: 502154089745.dkr.ecr.us-east-1.amazonaws.com/alfil/ui:${{ steps.extract_branch.outputs.branch }}-${{github.run_number}}
+          image: 502154089745.dkr.ecr.us-east-1.amazonaws.com/alfil/web-ui:${{ steps.extract_branch.outputs.branch }}-${{github.run_number}}
       - name: Deploy to Amazon ECS service
         if: ${{ false }}
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
