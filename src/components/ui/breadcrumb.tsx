@@ -115,14 +115,14 @@ export const Breadcrumb = ({ items }: Props) => (
       {items.map((item, index) => (
         <React.Fragment key={index}>
           <BreadcrumbItem>
-            <BreadcrumbLink>
-              {index == items.length - 1 && (
-                <BreadcrumbPage>{item.label}</BreadcrumbPage>
-              )}
-              {index !== items.length - 1 && (
+            {index == items.length - 1 && (
+              <BreadcrumbPage>{item.label}</BreadcrumbPage>
+            )}
+            {index !== items.length - 1 && (
+              <BreadcrumbLink asChild>
                 <Link to={item.path}>{item.label}</Link>
-              )}
-            </BreadcrumbLink>
+              </BreadcrumbLink>
+            )}
           </BreadcrumbItem>
           {items.length > 0 && index !== items.length - 1 && (
             <BreadcrumbSeparator />
