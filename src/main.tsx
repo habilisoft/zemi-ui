@@ -11,7 +11,7 @@ import {
 } from "react-router-dom";
 import "./index.css";
 import { constructionRoutes } from "./modules/construction";
-import { RootLayout } from "./root-layout";
+import { RootLayout } from "./layouts";
 
 const router = createBrowserRouter([
   {

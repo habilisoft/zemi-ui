@@ -100,6 +100,7 @@ export function CompoundForm(props: Props) {
             </Select>
           </FormControl>
         );
+      case "number":
       case "text":
         return (
           <FormControl>
@@ -223,15 +224,15 @@ export function CompoundForm(props: Props) {
       )}
 
       {description && (
-        <p className="mt-1 text-sm leading-6 text-neutral-600 mb-6">
-          {description}
-        </p>
+        <p className="mt-1 text-sm leading-6 text-neutral-600">{description}</p>
       )}
 
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className={cn("gap-6 grid", `grid-cols-${columns}`)}
+          className={cn("gap-6 grid", `grid-cols-${columns}`, {
+            "mt-6": title || description,
+          })}
         >
           {inputs.map((inputData) => (
             <FormField

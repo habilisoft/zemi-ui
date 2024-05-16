@@ -84,7 +84,7 @@ export const Construction = () => {
   const [alertDialogIsOpen, setAlertDialogIsOpen] = useState(false);
   return (
     <div>
-      Construction
+      Constructora
       <br />
       <br />
       <Button onClick={() => setDialogIsOpen(true)}>Open Dialog</Button>

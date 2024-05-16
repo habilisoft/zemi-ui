@@ -4,20 +4,17 @@ import { SheetClose } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { NavLink, Outlet, useLocation } from "react-router-dom";
 
-const menuItems = [
-  {
-    title: "Dashboard",
-    path: "/construction",
-  },
-  {
-    title: "Proyectos",
-    path: "/construction/projects",
-  },
-];
+type Props = {
+  menuItems: {
+    title: string;
+    path: string;
+  }[];
+  title: string;
+};
 
-export const ConstructionLayout = () => {
+export const BaseLayout = ({ menuItems, title }: Props) => {
   const [sidebarIsHidden, setSidebarIsHidden] = useState(false);
   const location = useLocation();
 
@@ -35,7 +32,7 @@ export const ConstructionLayout = () => {
               "lg:border-b border-neutral-200 p-4 lg:flex items-center justify-between hidden"
             )}
           >
-            <h3 className="text-xl font-bold">Constructora</h3>
+            <h3 className="text-xl font-bold">{title}</h3>
             <Button variant="ghost" onClick={() => setSidebarIsHidden(true)}>
               <X size={18} />
             </Button>
@@ -49,7 +46,7 @@ export const ConstructionLayout = () => {
         )}
 
         <MobileMenu triggerButtonClassName="text-neutral-900 px-4 py-2 block lg:hidden">
-          <h3 className="text-xl font-bold">Constructora</h3>
+          <h3 className="text-xl font-bold">{title}</h3>
           <div className="mt-4 space-y-1">
             {menuItems.map((item) => (
               <SheetClose asChild key={item.title}>
@@ -60,7 +57,7 @@ export const ConstructionLayout = () => {
                   })}
                   asChild
                 >
-                  <Link to={item.path}>{item.title}</Link>
+                  <NavLink to={item.path}>{item.title}</NavLink>
                 </Button>
               </SheetClose>
             ))}
@@ -78,14 +75,14 @@ export const ConstructionLayout = () => {
                 })}
                 asChild
               >
-                <Link to={item.path}>{item.title}</Link>
+                <NavLink to={item.path}>{item.title}</NavLink>
               </Button>
             ))}
           </div>
         )}
       </div>
       <div className="flex-1 bg-white overflow-y-auto">
-        <div className="h-[1600px] p-10">
+        <div className="p-10">
           <Outlet />
         </div>
       </div>
