@@ -48,6 +48,22 @@ const formData: IFormSchema = {
         }),
     },
     {
+      label: "Country",
+      name: "country",
+      placeholder: "Select a country",
+      type: "combobox",
+      options: [
+        { label: "English", value: "en" },
+        { label: "French", value: "fr" },
+        { label: "German", value: "de" },
+        { label: "Spanish", value: "es" },
+      ],
+      defaultValue: null,
+      validations: z.string({
+        required_error: "Please select a country.",
+      }),
+    },
+    {
       label: "Gender",
       name: "gender",
       type: "radioGroup",
