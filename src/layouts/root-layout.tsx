@@ -1,4 +1,5 @@
 import { Outlet } from "react-router-dom";
+import { Toaster } from "@/components/ui/sonner";
 // import ls from "@livesession/sdk";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
@@ -16,6 +17,7 @@ export const RootLayout = () => {
         <Outlet />
       </div>
       <Footer />
+      <Toaster position="top-right" richColors />
     </div>
   );
 };

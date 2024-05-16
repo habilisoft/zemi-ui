@@ -1,10 +1,14 @@
 import { AlertDialog } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { CompoundForm } from "@/components/ui/compound-form";
+import { toast } from "sonner";
 import { Dialog } from "@/components/ui/dialog";
 import { IFormSchema } from "@/types";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
 import { z } from "zod";
+import { AlertCircle } from "lucide-react";
 
 const formData: IFormSchema = {
   inputs: [
@@ -109,6 +113,32 @@ export const Construction = () => {
       <Button onClick={() => setAlertDialogIsOpen(true)}>
         Open Alert Dialog
       </Button>
+      <br />
+      <br />
+      <Button onClick={() => toast.success("Proyecto creado exitosamente")}>
+        Open Toast
+      </Button>
+      <br />
+      <br />
+      <Alert variant="destructive">
+        <AlertCircle className="h-4 w-4" />
+        <AlertTitle>Error</AlertTitle>
+        <AlertDescription>
+          Lorem, ipsum dolor sit amet consectetur adipisicing elit.
+        </AlertDescription>
+      </Alert>
+      <br />
+      <br />
+      <Tabs defaultValue="account" className="w-[400px]">
+        <TabsList>
+          <TabsTrigger value="account">Account</TabsTrigger>
+          <TabsTrigger value="password">Password</TabsTrigger>
+        </TabsList>
+        <TabsContent value="account">
+          Make changes to your account here.
+        </TabsContent>
+        <TabsContent value="password">Change your password here.</TabsContent>
+      </Tabs>
       <br />
       <br />
       <div className="w-1/3">
