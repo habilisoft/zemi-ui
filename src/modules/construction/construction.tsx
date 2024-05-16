@@ -102,6 +102,7 @@ const formData: IFormSchema = {
 export const Construction = () => {
   const [dialogIsOpen, setDialogIsOpen] = useState(false);
   const [alertDialogIsOpen, setAlertDialogIsOpen] = useState(false);
+
   return (
     <div>
       Constructora
@@ -148,6 +149,9 @@ export const Construction = () => {
           description="Desc"
           sendingRequest={false}
           onSubmit={(data) => console.log(JSON.stringify(data, null, 2))}
+          onCancel={() => alert("Cancelled")}
+          alertDialogText="Seguro que deseas cancelar?"
+          alertDialogDesc="Si cancelas se perderan los datos"
         />
       </div>
       <AlertDialog

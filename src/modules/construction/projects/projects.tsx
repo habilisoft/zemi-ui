@@ -5,8 +5,15 @@ import { projects } from "./components/projects-data-table/data";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { Link } from "react-router-dom";
+// import { useState } from "react";
+// import { useProjects } from "@/hooks/projects";
 
 export function Projects() {
+  // const [searchTerm, setSearchTerm] = useState("")
+  // const {projects, isLoading} = useProjects(searchTerm)
+
+  // if(isLoading) return null;
+
   return (
     <div className="h-full flex-1 flex-col space-y-8">
       <Breadcrumb

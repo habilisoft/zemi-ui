@@ -46,26 +46,50 @@ import {
   LoaderCircle,
 } from "lucide-react";
 import { es } from "date-fns/locale";
+import { AlertDialog } from "./alert-dialog";
+import { useState } from "react";
 
 interface Props extends IFormSchema {
   submitButtonText?: string;
+  cancelButtonText?: string;
   title?: string;
   description?: string;
   columns?: number;
   sendingRequest: boolean;
   onSubmit: (data: Record<string, string | string[]>) => void;
+  onCancel?: () => void;
+  alertDialogText?: string;
+  alertDialogDesc?: string;
+  labelsClassName?: string;
+  submitButtonClassName?: string;
+  submitButtonVariant?:
+    | "default"
+    | "destructive"
+    | "outline"
+    | "secondary"
+    | "ghost"
+    | "link";
 }
 
 export function CompoundForm(props: Props) {
   const {
     inputs,
-    submitButtonText = "Submit",
+    submitButtonText = "Enviar",
+    cancelButtonText = "Cancelar",
     description,
     title,
     columns = 1,
     sendingRequest,
     onSubmit,
+    onCancel,
+    alertDialogText,
+    alertDialogDesc,
+    labelsClassName,
+    submitButtonVariant = "default",
+    submitButtonClassName,
   } = props;
+  const [alertDialogIsOpen, setAlertDialogIsOpen] = useState(false);
+
   const FormSchema = z.object(
     inputs.reduce(
       (accumulator, currentValue) => ({
@@ -114,6 +138,7 @@ export function CompoundForm(props: Props) {
           </FormControl>
         );
       case "number":
+      case "password":
       case "text":
         return (
           <FormControl>
@@ -307,15 +332,33 @@ export function CompoundForm(props: Props) {
               name={inputData.name as never}
               render={({ field }) => (
                 <FormItem className="flex flex-col">
-                  <FormLabel>{inputData.label}</FormLabel>
+                  <FormLabel className={cn(labelsClassName)}>
+                    {inputData.label}
+                  </FormLabel>
                   {renderInputBasedOnType(inputData, field)}
                   <FormMessage />
                 </FormItem>
               )}
             />
           ))}
-          <div>
-            <Button type="submit" disabled={sendingRequest}>
+          <div className="flex items-center gap-4">
+            {onCancel && (
+              <Button
+                onClick={() => setAlertDialogIsOpen(true)}
+                variant="outline"
+                type="button"
+                disabled={sendingRequest}
+              >
+                {cancelButtonText}
+              </Button>
+            )}
+
+            <Button
+              variant={submitButtonVariant}
+              type="submit"
+              disabled={sendingRequest}
+              className={cn(submitButtonClassName)}
+            >
               {sendingRequest && (
                 <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
               )}
@@ -324,6 +367,18 @@ export function CompoundForm(props: Props) {
           </div>
         </form>
       </Form>
+      {onCancel && (
+        <AlertDialog
+          isOpen={alertDialogIsOpen}
+          cancel={() => setAlertDialogIsOpen(false)}
+          action={() => {
+            onCancel();
+            setAlertDialogIsOpen(false);
+          }}
+          title={alertDialogText || ""}
+          description={alertDialogDesc || ""}
+        />
+      )}
     </>
   );
 }

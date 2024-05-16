@@ -50,6 +50,7 @@ export interface IInputFormSchema {
     | "radioGroup"
     | "textarea"
     | "combobox"
+    | "password"
     | "date";
   placeholder?: string;
   name: string;
