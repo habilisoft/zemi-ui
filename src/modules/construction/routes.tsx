@@ -1,10 +1,22 @@
+import { BaseLayout } from "@/layouts";
 import { Construction } from "./construction";
-import { ConstructionLayout } from "./construction-layout";
 import { Projects } from "./projects";
+import { NewProject } from "./projects/new-project";
+
+const menuItems = [
+  {
+    title: "Dashboard",
+    path: "/construction",
+  },
+  {
+    title: "Proyectos",
+    path: "/construction/projects",
+  },
+];
 
 export const constructionRoutes = {
   path: "construction",
-  element: <ConstructionLayout />,
+  element: <BaseLayout title="Constructora" menuItems={menuItems} />,
   children: [
     {
       index: true,
@@ -13,6 +25,10 @@ export const constructionRoutes = {
     {
       path: "projects",
       element: <Projects />,
+    },
+    {
+      path: "projects/new",
+      element: <NewProject />,
     },
   ],
 };
