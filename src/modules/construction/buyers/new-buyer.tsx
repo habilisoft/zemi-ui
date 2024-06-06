@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 export function NewBuyer() {
   const navigate = useNavigate();
 
-  function handleSuccess(data: Record<string, string> | undefined) {
+  function handleSuccess() {
     toast.success("Cliente creado exitosamente");
     navigate("/construction/buyers");
   }

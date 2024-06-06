@@ -23,7 +23,7 @@ export function NewProject() {
       downPaymentInformation: {
         downPaymentAmount: {
           type: "percentage",
-          value: {
+          amount: {
             currency: data.currency as string,
             value: parseFloat(data.unitPrice as string),
           },

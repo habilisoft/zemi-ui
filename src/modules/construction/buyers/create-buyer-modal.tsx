@@ -8,7 +8,7 @@ export function CreateBuyerModal(
 
   return (
     <Dialog
-      title="Crear Comprador"
+      title="Crear Cliente"
       isOpen={isOpen}
       close={close}
     >

@@ -2,7 +2,7 @@ import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { ProjectsService } from '@/services/projects.service.ts';
 import { useEffect, useState } from 'react';
 import { IProject } from '@/types';
-import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import Overlay from '@/components/overlay';
 import PageTitle from '@/components/ui/page-title.tsx';
 import ClosableAlert from '@/components/ui/closable-alert.tsx';

@@ -41,7 +41,7 @@ export function CreateBuyerForm(
       <CompoundForm
         sendingRequest={loading}
         onSubmit={handleCreateBuyer}
-        submitButtonText="Crear Comprador"
+        submitButtonText="Crear Cliente"
         onCancel={onCancel}
         confirmCancel={confirmCancel}
         alertDialogDesc="¿Estás seguro de cancelar la creación del cliente?"
