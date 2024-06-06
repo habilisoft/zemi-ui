@@ -132,6 +132,10 @@ export interface IProjectUnit {
   value: number;
   currency: string;
 }
+export interface IProjectUnitRequest {
+  name: string,
+  value: Money
+}
 
 export interface IProjectUnitPrice {
   value: Money;

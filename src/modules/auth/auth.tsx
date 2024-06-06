@@ -13,12 +13,12 @@ export default function AuthPage() {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const onSubmit = (data: Record<string, string>) => {
+  const onSubmit = (data: Record<string, string | string[]>) => {
     setLoading(true);
     setError(null);
     const request: LoginRequest = {
-      username: data.username,
-      password: data.password
+      username: data.username as string,
+      password: data.password as string
     }
     login(request).then(() => {
       setLoading(false)

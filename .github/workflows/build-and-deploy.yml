@@ -52,16 +52,15 @@ jobs:
           container-name: web-ui
           image: 502154089745.dkr.ecr.us-east-1.amazonaws.com/alfil/web-ui:${{ steps.extract_branch.outputs.branch }}-${{github.run_number}}
       - name: Set Variables for main branch
-        if: github.ref == 'refs/heads/main'
+        if: steps.extract_branch.outputs.branch == 'main'
         run: |
           echo "ECS_SERVICE=alfil-prod-web-ui-service" >> $GITHUB_ENV
           echo "ECS_CLUSTER=alfil-prod" >> $GITHUB_ENV
-
       - name: Set Variables for development branch
-        if: github.ref == 'refs/heads/dev'
+        if: steps.extract_branch.outputs.branch == 'dev'
         run: |
-          echo "VAR1=dev_value1" >> $GITHUB_ENV
-          echo "VAR2=dev_value2" >> $GITHUB_ENV
+          echo "ECS_SERVICE=alfil-dev-web-ui-service" >> $GITHUB_ENV
+          echo "ECS_CLUSTER=alfil-dev" >> $GITHUB_ENV
       - name: Deploy to Amazon ECS service
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:

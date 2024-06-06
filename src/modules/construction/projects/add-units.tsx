@@ -1,17 +1,17 @@
 import { Breadcrumb } from '@/components/ui/breadcrumb.tsx';
 import PageTitle from '@/components/ui/page-title.tsx';
 import { Button } from '@/components/ui/button.tsx';
-import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
-import { z } from 'zod';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { z, ZodIssueBase } from 'zod';
 import { FormEvent, useEffect, useState } from 'react';
-import { IProject, IProjectUnit, Money } from '@/types';
+import { IProject, IProjectUnitRequest, Money } from '@/types';
 import { ProjectsService } from '@/services/projects.service.ts';
 import { Input } from '@/components/ui/input.tsx';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select.tsx';
-import { ZodIssueBase } from 'zod/lib/ZodError';
 import { Label } from '@/components/ui/label.tsx';
 import ClosableAlert from '@/components/ui/closable-alert.tsx';
 import { toast } from 'sonner';
+import { ConfirmCancelButton } from '@/components/ui/confirm-cancel-button.tsx';
 
 const ElementSchema = z.object({
   name: z.string().min(1, { message: 'El nombre de la unidad es requerido' }),
@@ -26,22 +26,25 @@ const FormSchema = z.array(ElementSchema);
 export function AddUnits() {
   const { projectId } = useParams<{ projectId: string }>();
   const { state: { unitsToAdd } } = useLocation();
-  const [loading, setLoading] = useState(false)
+  const [, setLoadingProject] = useState(false);
+  const [savingUnits, setSavingUnits] = useState(false);
   const [project, setProject] = useState<IProject | undefined>(undefined);
   const projectsService = new ProjectsService(projectId);
   const [error, setError] = useState(false);
   const navigate = useNavigate();
 
 
-  const [formData, setFormData] = useState([{ name: '', value: { currency: 'USD', value: '' } }]);
+  const [formData, setFormData] = useState<IProjectUnitRequest[]>([{ name: '', value: { currency: 'USD', value: 0 } }]);
   const [formErrors, setFormErrors] = useState<ZodIssueBase[]>([]);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setFormErrors([]);
+    setSavingUnits(true);
     try {
       const validateData = FormSchema.parse(formData);
       setFormErrors([]);
-      const units = validateData.map(({ name, value }) => ({ name, value } as IProjectUnit));
+      const units = validateData.map(({ name, value }) => ({ name, value } as IProjectUnitRequest));
       projectsService.addUnits(units)
         .then(() => {
           navigate(`/construction/projects/${projectId}/details?tab=units`)
@@ -50,33 +53,40 @@ export function AddUnits() {
         .catch(({ response }) => {
           setError(response?.data?.message)
         });
-    } catch (error: ZodIssueBase) {
-      setFormErrors(error.errors);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        setFormErrors(error.errors);
+      }
+    } finally {
+      setSavingUnits(false);
     }
   };
 
   useEffect(() => {
     const formD = Array.from({ length: unitsToAdd || 1 }, (_, i) => ({
       name: `Unidad ${i + 1}`,
-      value: { currency: 'USD', value: '' }
+      value: { currency: 'USD', value: 0 }
     }));
     setFormData(formD);
 
     projectsService.getProject()
       .then((projectData) => {
-        setLoading(false);
+        setLoadingProject(false);
         setProject(projectData);
       })
       .catch(({ response }) => {
         setError(response?.data?.message)
-        setLoading(false);
+        setLoadingProject(false);
       });
   }, [])
 
-  const handleChange = (index: number, key: string, value: string | Money) => {
-    const updatedFormData = [...formData];
-    updatedFormData[index][key] = value;
-    setFormData(updatedFormData);
+  const handleChange = (index: number, key: string, value: string | Money | number) => {
+    const updatedData = [...formData];
+    updatedData[index] = {
+      ...updatedData[index],
+      [key]: value
+    };
+    setFormData(updatedData);
   };
 
   return (
@@ -94,13 +104,13 @@ export function AddUnits() {
         <div className="flex items-center justify-between space-y-2">
           <PageTitle title="Agregar Unidades" subtitle={project?.name}/>
           <div className="space-x-2">
-            <Button
-              variant="secondary"
-              asChild>
-              <Link to="new">
-                Cancelar
-              </Link>
-            </Button>
+            <ConfirmCancelButton
+              disabled={savingUnits}
+              alertDialogTitle="Confirmar"
+              alertDialogText="¿Estás seguro de cancelar la creación de unidades?"
+              alertAcceptButtonText="Si, estoy seguro"
+              onCancel={() => navigate(`/construction/projects/${projectId}/details`)}
+              confirmCancel/>
             <Button
               type="submit">
               Guardar Unidades
@@ -132,7 +142,7 @@ export function AddUnits() {
                   <div className="flex items-center">
                     <div>
                       <Select
-                        onValueChange={(e) => handleChange(index, 'value', { ...item.value, currency: e })}
+                        onValueChange={(e) => handleChange(index, 'value', { value: item.value.value, currency: e })}
                         value={item.value.currency}>
                         <SelectTrigger>
                           <SelectValue

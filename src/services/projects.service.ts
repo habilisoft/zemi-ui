@@ -1,5 +1,5 @@
 import axios from "axios";
-import { IProject, IProjectUnit, IReserveUnitData } from '@/types';
+import { IProject, IProjectUnit, IProjectUnitRequest, IReserveUnitData } from '@/types';
 
 export class ProjectsService {
   readonly projects_endpoint: string;
@@ -60,7 +60,7 @@ export class ProjectsService {
     }
   }
 
-  async addUnits(units: IProjectUnit[]) {
+  async addUnits(units: IProjectUnitRequest[]) {
     try {
       const { data } = await axios.post(this.projects_endpoint + "/" + this.projectId + "/units", { units });
       return data;
