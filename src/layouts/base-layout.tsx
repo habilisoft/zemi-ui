@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
+import "./styles.css";
 
 type Props = {
   menuItems: {
@@ -22,7 +23,7 @@ export const BaseLayout = ({ menuItems, title }: Props) => {
     <>
       <div
         className={cn(
-          "flex-col gap-y-5 overflow-y-auto lg:border-r border-neutral-200 bg-neutral-100",
+          "flex-col gap-y-5 overflow-y-auto lg:border-r border-neutral-200 bg-neutral-100 transition-all ",
           { "w-60": !sidebarIsHidden }
         )}
       >
@@ -34,14 +35,14 @@ export const BaseLayout = ({ menuItems, title }: Props) => {
           >
             <h3 className="text-xl font-bold">{title}</h3>
             <Button variant="ghost" onClick={() => setSidebarIsHidden(true)}>
-              <X size={18} />
+              <X size={18}/>
             </Button>
           </div>
         )}
 
         {sidebarIsHidden && (
           <Button variant="ghost" onClick={() => setSidebarIsHidden(false)}>
-            <Menu size={18} />
+            <Menu size={18}/>
           </Button>
         )}
 
@@ -57,7 +58,11 @@ export const BaseLayout = ({ menuItems, title }: Props) => {
                   })}
                   asChild
                 >
-                  <NavLink to={item.path}>{item.title}</NavLink>
+                  <NavLink
+                    end={item.path.split("/").length === 2}
+                    to={item.path}>
+                    {item.title}
+                  </NavLink>
                 </Button>
               </SheetClose>
             ))}
@@ -65,25 +70,22 @@ export const BaseLayout = ({ menuItems, title }: Props) => {
         </MobileMenu>
 
         {!sidebarIsHidden && (
-          <div className="mt-4 space-y-1 hidden lg:block">
+          <div className="mt-4 space-y-2 hidden lg:block">
             {menuItems.map((item) => (
-              <Button
+              <NavLink
+                to={item.path}
                 key={item.title}
-                variant="link"
-                className={cn("block w-full text-left rounded-none px-4", {
-                  "text-amber-700 font-bold": location.pathname === item.path,
-                })}
-                asChild
-              >
-                <NavLink to={item.path}>{item.title}</NavLink>
-              </Button>
+                end={item.path.split("/").length === 2}
+                className="nav-item">
+                {item.title}
+              </NavLink>
             ))}
           </div>
         )}
       </div>
-      <div className="flex-1 bg-white overflow-y-auto">
-        <div className="p-10">
-          <Outlet />
+      <div className="flex-1 bg-white overflow-y-auto transition-all">
+        <div className="p-5">
+          <Outlet/>
         </div>
       </div>
     </>

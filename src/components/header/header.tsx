@@ -8,7 +8,7 @@ import { TenantsDropdown } from "../tenants-dropdown";
 
 export const Header = () => {
   return (
-    <header className="bg-neutral-900 px-10 py-3 flex items-center gap-5 justify-between md:justify-normal">
+    <header className="bg-neutral-900 px-10 py-1 flex items-center gap-5 justify-between md:justify-normal">
       <div className="flex items-center gap-4">
         <Link to="/" className="flex flex-shrink-0 items-center text-amber-400">
           <Bolt />
