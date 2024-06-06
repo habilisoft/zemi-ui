@@ -48,10 +48,12 @@ import {
 import { es } from "date-fns/locale";
 import { AlertDialog } from "./alert-dialog";
 import { useState } from "react";
+import { RemoteComboBox } from '@/components/ui/remote-combobox.tsx';
 
 interface Props extends IFormSchema {
   submitButtonText?: string;
   cancelButtonText?: string;
+  confirmCancel?: boolean;
   title?: string;
   description?: string;
   columns?: number;
@@ -62,6 +64,8 @@ interface Props extends IFormSchema {
   alertDialogDesc?: string;
   labelsClassName?: string;
   submitButtonClassName?: string;
+  alertAcceptButtonText?: string;
+  alertCancelButtonText?: string;
   submitButtonVariant?:
     | "default"
     | "destructive"
@@ -87,6 +91,9 @@ export function CompoundForm(props: Props) {
     labelsClassName,
     submitButtonVariant = "default",
     submitButtonClassName,
+    confirmCancel = true,
+    alertAcceptButtonText,
+    alertCancelButtonText,
   } = props;
   const [alertDialogIsOpen, setAlertDialogIsOpen] = useState(false);
 
@@ -159,6 +166,21 @@ export function CompoundForm(props: Props) {
             />
           </FormControl>
         );
+      case "remote-combobox":
+        return (
+          <FormControl>
+            <RemoteComboBox
+              endpoint={inputData.remoteComboProps?.endpoint || ""}
+              handleSelect={(value) => {
+                form.setValue(field.name, value as never);
+              }}
+              selectedValue={field.value}
+              createModal={inputData?.remoteComboProps?.createModal || undefined}
+              displayProperty={inputData.remoteComboProps?.displayProperty || ""}
+              valueProperty={inputData.remoteComboProps?.valueProperty || ""}
+              placeholder={inputData.placeholder || ""}/>
+          </FormControl>
+        )
       case "combobox":
         return (
           <Popover>
@@ -325,7 +347,16 @@ export function CompoundForm(props: Props) {
             "mt-6": title || description,
           })}
         >
-          {inputs.map((inputData) => (
+          {inputs
+            .filter((inputData) => {
+              if (!inputData.showIf) return true;
+              return inputData.showIf.every((condition) => {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-expect-error
+                return form.watch(condition.field).toString() === condition.value?.toString();
+              });
+            })
+            .map((inputData) => (
             <FormField
               key={inputData.name}
               control={form.control}
@@ -344,7 +375,11 @@ export function CompoundForm(props: Props) {
           <div className="flex items-center gap-4">
             {onCancel && (
               <Button
-                onClick={() => setAlertDialogIsOpen(true)}
+                onClick={() => {
+                  confirmCancel
+                    ? setAlertDialogIsOpen(true)
+                    : onCancel();
+                }}
                 variant="outline"
                 type="button"
                 disabled={sendingRequest}
@@ -367,7 +402,7 @@ export function CompoundForm(props: Props) {
           </div>
         </form>
       </Form>
-      {onCancel && (
+      {(onCancel && confirmCancel) && (
         <AlertDialog
           isOpen={alertDialogIsOpen}
           cancel={() => setAlertDialogIsOpen(false)}
@@ -377,6 +412,8 @@ export function CompoundForm(props: Props) {
           }}
           title={alertDialogText || ""}
           description={alertDialogDesc || ""}
+          acceptButtonText={alertAcceptButtonText}
+          cancelButtonText={alertCancelButtonText}
         />
       )}
     </>

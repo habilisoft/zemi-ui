@@ -1,0 +1,64 @@
+.data-grid {
+    height: calc(100vh - 250px);
+}
+
+.data-grid-table tr:nth-child(even) {
+    --tw-bg-opacity: 1;
+    background-color: rgb(249 250 251 / var(--tw-bg-opacity));
+}
+
+.data-grid-table {
+    width: 100%;
+}
+
+.data-grid-table > :not([hidden]) ~ :not([hidden]) {
+    --tw-divide-y-reverse: 0;
+    border-top-width: calc(1px * calc(1 - var(--tw-divide-y-reverse)));
+    border-bottom-width: calc(1px * var(--tw-divide-y-reverse));
+    --tw-divide-opacity: 1;
+    border-color: rgb(229 231 235 / var(--tw-divide-opacity));
+}
+
+.data-grid-table tr:hover {
+    --tw-bg-opacity: 1;
+    background-color: rgb(243 244 246 / var(--tw-bg-opacity));
+}
+
+.data-grid-table thead tr th {
+    white-space: nowrap;
+    border-top-width: 1px;
+    --tw-border-opacity: 1;
+    border-color: rgb(229 231 235 / var(--tw-border-opacity));
+    padding: 0.75rem 1.5rem;
+    text-align: left;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    font-weight: bolder;
+    letter-spacing: 0.05em;
+    --tw-text-opacity: 1;
+    color: rgb(107 114 128 / var(--tw-text-opacity));
+}
+
+.data-grid {
+    height: calc(100vh - 250px);
+}
+
+.data-grid-table tr:nth-child(even) {
+    @apply bg-gray-50;
+}
+
+.data-grid-table {
+    @apply w-full divide-y divide-gray-200;
+}
+
+.data-grid-table tr {
+    @apply hover:bg-gray-100;
+}
+
+.data-grid-table thead tr th {
+    @apply px-6 py-3 text-left text-sm font-bold text-gray-500 tracking-wider whitespace-nowrap border-t border-gray-200;
+}
+
+.data-grid-table tbody tr td {
+    @apply px-6 py-2 whitespace-nowrap text-sm text-gray-900;
+}

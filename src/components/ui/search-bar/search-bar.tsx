@@ -11,7 +11,7 @@ export const SearchBar = ({ className, inputClassName }: Props) => {
   return (
     <div
       className={cn(
-        "bg-neutral-800 border border-neutral-700 rounded-md flex items-center px-3",
+        "bg-neutral-800 border border-neutral-700 rounded-md flex items-center px-3 ",
         className
       )}
     >
@@ -19,7 +19,7 @@ export const SearchBar = ({ className, inputClassName }: Props) => {
       <Input
         placeholder="Buscar..."
         className={cn(
-          "bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 h-8 text-white placeholder-neutral-400",
+          "focus:border-amber-700 bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 h-8 text-white placeholder-neutral-400",
           inputClassName
         )}
       />

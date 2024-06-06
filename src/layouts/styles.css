@@ -1,0 +1,7 @@
+.nav-item {
+    @apply block w-full text-left rounded-none px-4 py-2 text-sm
+}
+
+.nav-item.active {
+    @apply text-amber-700 font-bold
+}

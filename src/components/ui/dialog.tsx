@@ -102,16 +102,16 @@ const DialogDescription = React.forwardRef<
 ));
 DialogDescription.displayName = DialogPrimitive.Description.displayName;
 
-type Props = {
+export type DialogProps = {
   isOpen: boolean;
-  close: () => void;
-  children: React.ReactNode;
+  close: (data?: Record<string, string> | undefined) => void;
+  children?: React.ReactNode;
   title?: string;
 };
 
-export const Dialog = ({ isOpen, close, children, title }: Props) => {
+export const Dialog = ({ isOpen, close, children, title }: DialogProps) => {
   return (
-    <DialogRoot open={isOpen} onOpenChange={close}>
+    <DialogRoot open={isOpen} onOpenChange={()=>close()}>
       <DialogContent>
         <DialogHeader>
           {title && <DialogTitle>{title}</DialogTitle>}

@@ -12,19 +12,48 @@ import {
 } from "react-router-dom";
 import "./index.css";
 import { constructionRoutes } from "./modules/construction";
+import { loansRoutes } from '@/modules/loans';
+import { payrollRoutes } from '@/modules/payroll';
+import { accountingRoutes } from '@/modules/accounting';
 import { RootLayout } from "./layouts";
 import AuthPage from "./modules/auth/auth";
+import { AuthProvider } from '@/context/auth-context';
+import { getSubdomain } from '@/lib/utils';
+import axios from "axios";
+import { Receipt } from '@/modules/construction/payment-receipt/receipt.tsx';
+
+
+axios.defaults.headers.common['TenantId'] = getSubdomain();
+axios.interceptors.response.use(
+  response => response,
+  error => {
+    if (error.response?.status === 401) {
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <RootLayout />,
-    children: [constructionRoutes],
+    element: <RootLayout/>,
+    children: [
+      constructionRoutes,
+      accountingRoutes,
+      payrollRoutes,
+      loansRoutes
+    ],
+    errorElement: <div>Error inesperado</div>,
   },
   {
     path: "/login",
-    element: <AuthPage />,
+    element: <AuthPage/>,
   },
+  {
+    path: "/receipt",
+    element: <Receipt/>
+  }
 ]);
 
 const queryClient = new QueryClient();
@@ -50,7 +79,9 @@ Sentry.init({
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
+      <AuthProvider>
+        <RouterProvider router={router}/>
+      </AuthProvider>
     </QueryClientProvider>
   </React.StrictMode>
 );
