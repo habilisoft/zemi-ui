@@ -9,7 +9,7 @@
 name: Build and Deploy to AWS (DEV)
 on:
   push:
-    branches: ["main","dev"]
+    branches: ["main"]
 jobs:
   build:
     name: "Build and Deploy"
@@ -44,29 +44,18 @@ jobs:
         env:
           IMAGE: 502154089745.dkr.ecr.us-east-1.amazonaws.com/alfil/web-ui:${{ steps.extract_branch.outputs.branch }}-${{github.run_number}}
       - name: Render Amazon ECS task definition
-        if: ${{ false }}
         id: render-web-container
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition: ./.aws/task-definition_DEV.json
+          task-definition: ./.aws/task-definition.json
           container-name: web-ui
           image: 502154089745.dkr.ecr.us-east-1.amazonaws.com/alfil/web-ui:${{ steps.extract_branch.outputs.branch }}-${{github.run_number}}
-      - name: Set Variables for main branch
-        if: steps.extract_branch.outputs.branch == 'main'
-        run: |
-          echo "ECS_SERVICE=alfil-prod-web-ui-service" >> $GITHUB_ENV
-          echo "ECS_CLUSTER=alfil-prod" >> $GITHUB_ENV
-      - name: Set Variables for development branch
-        if: steps.extract_branch.outputs.branch == 'dev'
-        run: |
-          echo "ECS_SERVICE=alfil-dev-web-ui-service" >> $GITHUB_ENV
-          echo "ECS_CLUSTER=alfil-dev" >> $GITHUB_ENV
       - name: Deploy to Amazon ECS service
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
           task-definition: ${{ steps.render-web-container.outputs.task-definition }}
-          service: $ECS_SERVICE
-          cluster: $ECS_CLUSTER
+          service: alfil-prod-web-ui-service
+          cluster: alfil-prod
           wait-for-service-stability: true
       - name: Update UI Version
         if: ${{ false }}
