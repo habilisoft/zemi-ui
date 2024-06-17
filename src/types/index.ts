@@ -85,7 +85,7 @@ export interface IInputFormSchema {
     | ZodEnum<any>
     | ZodOptional<ZodString>
     // eslint-disable-next-line
-    | ZodObject<{ }, "strip", ZodTypeAny, { }, { }>
+    | ZodObject<{}, "strip", ZodTypeAny, {}, {}>
     | ZodDate;
 }
 
@@ -142,6 +142,7 @@ export interface IDownPaymentPaymentMethod {
   percentage?: number;
   reservationAmount?: Money;
 }
+
 export interface IProjectUnit {
   id: IProjectUnitId;
   name: string;
@@ -150,6 +151,7 @@ export interface IProjectUnit {
   value: number;
   currency: string;
 }
+
 export interface IProjectUnitRequest {
   name: string,
   value: Money,
@@ -173,6 +175,7 @@ export interface IProjectUnitId {
 export interface IBuyer {
   id: number;
   name: string;
+
   [key: string]: string | number;
 }
 
@@ -224,4 +227,14 @@ export interface IDownPaymentResponse {
   dueDate: string;
   amount: Money;
   balance: Money;
+}
+
+export interface ICompanyInformation {
+  name?: string,
+  address?: string,
+  phone?: string,
+  email?: string,
+  website?: string,
+  logo?: string,
+  document?: string
 }
