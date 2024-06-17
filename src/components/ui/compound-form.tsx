@@ -34,7 +34,7 @@ import {
 } from "@/components/ui/select";
 
 import { Input } from "@/components/ui/input";
-import { IFormSchema, IInputFormSchema } from "@/types";
+import { IFormSchema, IInputFormSchema, Money } from "@/types";
 import { Checkbox } from "./checkbox";
 import { Textarea } from "./textarea";
 import { cn } from "@/lib/utils";
@@ -47,8 +47,9 @@ import {
 } from "lucide-react";
 import { es } from "date-fns/locale";
 import { AlertDialog } from "./alert-dialog";
-import { useState } from "react";
+import React, { useState } from "react";
 import { RemoteComboBox } from '@/components/ui/remote-combobox.tsx';
+import { FormHelpIcon } from '@/components/ui/form-help-icon';
 
 interface Props extends IFormSchema {
   submitButtonText?: string;
@@ -66,6 +67,7 @@ interface Props extends IFormSchema {
   submitButtonClassName?: string;
   alertAcceptButtonText?: string;
   alertCancelButtonText?: string;
+  externalErrors?: Record<string, string>;
   submitButtonVariant?:
     | "default"
     | "destructive"
@@ -131,7 +133,7 @@ export function CompoundForm(props: Props) {
             <Select onValueChange={field.onChange} defaultValue={field.value}>
               <FormControl>
                 <SelectTrigger>
-                  <SelectValue placeholder={inputData.placeholder} />
+                  <SelectValue placeholder={inputData.placeholder}/>
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
@@ -196,16 +198,16 @@ export function CompoundForm(props: Props) {
                 >
                   {field.value
                     ? inputData?.options?.find(
-                        (language) => language.value === field.value
-                      )?.label
+                      (language) => language.value === field.value
+                    )?.label
                     : inputData.placeholder}
-                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50"/>
                 </Button>
               </FormControl>
             </PopoverTrigger>
             <PopoverContent className="w-[200px] p-0">
               <Command>
-                <CommandInput placeholder="Buscar..." />
+                <CommandInput placeholder="Buscar..."/>
                 <CommandEmpty>Sin resultados.</CommandEmpty>
                 <CommandGroup>
                   <CommandList>
@@ -251,7 +253,7 @@ export function CompoundForm(props: Props) {
                   ) : (
                     <span>Selecciona un fecha</span>
                   )}
-                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50"/>
                 </Button>
               </FormControl>
             </PopoverTrigger>
@@ -287,10 +289,10 @@ export function CompoundForm(props: Props) {
                         return checked
                           ? field.onChange([...field.value, option.value])
                           : field.onChange(
-                              (field.value as string[])?.filter(
-                                (value) => value !== option.value
-                              )
-                            );
+                            (field.value as string[])?.filter(
+                              (value) => value !== option.value
+                            )
+                          );
                       }}
                     />
                   </FormControl>
@@ -314,7 +316,7 @@ export function CompoundForm(props: Props) {
                   className="flex items-center space-x-3 space-y-0"
                 >
                   <FormControl>
-                    <RadioGroupItem value={option.value} />
+                    <RadioGroupItem value={option.value}/>
                   </FormControl>
                   <FormLabel className="font-normal">{option.label}</FormLabel>
                 </FormItem>
@@ -322,7 +324,45 @@ export function CompoundForm(props: Props) {
             </RadioGroup>
           </FormControl>
         );
-
+      case "money":
+      {
+        const value = field.value as Money;
+        return (
+          <FormControl>
+            <div className="flex items-center">
+              <div>
+                <Select
+                  onValueChange={(e) => form.setValue(field.name, { value: value.value, currency: e } as never)}
+                  value={value.currency}>
+                  <SelectTrigger>
+                    <SelectValue
+                      placeholder="Seleccione una moneda"/>
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem
+                      key="USD"
+                      value="USD">
+                      USD
+                    </SelectItem>
+                    <SelectItem
+                      key="DOP"
+                      value="DOP">
+                      DOP
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <Input
+                placeholder="valor"
+                type="number"
+                value={value.value}
+                onChange={(e) => form.setValue(field.name, { ...value, value: Number.parseInt(e.target.value) } as never)}
+                className="form-input"
+              />
+            </div>
+          </FormControl>
+        )
+        }
       default:
         return null;
     }
@@ -353,25 +393,30 @@ export function CompoundForm(props: Props) {
               return inputData.showIf.every((condition) => {
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-expect-error
-                return form.watch(condition.field).toString() === condition.value?.toString();
+                const show =  form.watch(condition.field).toString() === condition.value?.toString();
+                if(!show) {
+                  form.setValue(inputData.name as never, inputData.defaultValue as never);
+                }
+                return show;
               });
             })
             .map((inputData) => (
-            <FormField
-              key={inputData.name}
-              control={form.control}
-              name={inputData.name as never}
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel className={cn(labelsClassName)}>
-                    {inputData.label}
-                  </FormLabel>
-                  {renderInputBasedOnType(inputData, field)}
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          ))}
+              <FormField
+                key={inputData.name}
+                control={form.control}
+                name={inputData.name as never}
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel className={cn(labelsClassName, 'flex items-center justify-between')}>
+                      <div>{inputData.label}</div>
+                      {inputData.helpText && <FormHelpIcon text={inputData.helpText}/>}
+                    </FormLabel>
+                    {renderInputBasedOnType(inputData, field)}
+                    <FormMessage/>
+                  </FormItem>
+                )}
+              />
+            ))}
           <div className="flex items-center gap-4">
             {onCancel && (
               <Button
@@ -395,7 +440,7 @@ export function CompoundForm(props: Props) {
               className={cn(submitButtonClassName)}
             >
               {sendingRequest && (
-                <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
+                <LoaderCircle className="mr-2 h-4 w-4 animate-spin"/>
               )}
               {submitButtonText}
             </Button>

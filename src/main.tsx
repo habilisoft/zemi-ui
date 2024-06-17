@@ -11,7 +11,7 @@ import {
   matchRoutes,
 } from "react-router-dom";
 import "./index.css";
-import { constructionRoutes } from "./modules/construction";
+import { constructionRoutes } from "@/modules/construction";
 import { loansRoutes } from '@/modules/loans';
 import { payrollRoutes } from '@/modules/payroll';
 import { accountingRoutes } from '@/modules/accounting';
@@ -21,6 +21,7 @@ import { AuthProvider } from '@/context/auth-context';
 import { getSubdomain } from '@/lib/utils';
 import axios from "axios";
 import { Receipt } from '@/modules/construction/payment-receipt/receipt.tsx';
+import { userSettingsRoutes } from '@/modules/user-settings';
 
 
 axios.defaults.headers.common['TenantId'] = getSubdomain();
@@ -42,7 +43,8 @@ const router = createBrowserRouter([
       constructionRoutes,
       accountingRoutes,
       payrollRoutes,
-      loansRoutes
+      loansRoutes,
+      userSettingsRoutes
     ],
     errorElement: <div>Error inesperado</div>,
   },

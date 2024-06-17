@@ -13,7 +13,7 @@ export function Buyers() {
       "header": "Nombre",
       "field": "name",
       "render": (_cell, row: IProject) => <Link className="text-blue-600 underline hover:text-blue-800"
-                                                to={`/construction/buyers/${row.id}/details`}>{row.name}</Link>
+                                                to={`/construction/buyers/${row.id}`}>{row.name}</Link>
     }
   ]
 

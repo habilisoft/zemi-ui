@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useCompoundStore } from "@/stores/compound-store";
 import { shallow } from "zustand/shallow";
@@ -25,6 +25,13 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     shallow
   );
 
+  useEffect(() => {
+    if (window.location.pathname === "/login") {
+      return;
+    }
+    getUser();
+  }, [window.location.pathname]);
+
   const login = async (request: LoginRequest) : Promise<IUser> => {
     return new Promise((resolve, reject) => {
       axios.post('/api/v1/authenticate', request, {
@@ -43,7 +50,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
 
-  const getUser = async () => {
+  const getUser = async () : Promise<IUser> => {
     try {
       const getCurrentUser = axios.get("/api/v1/users/me");
       const { data } = await getCurrentUser;
@@ -53,7 +60,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } catch (error) {
       await axios.get("/api/v1/logout");
       setAuthUserLogout();
-      return error;
+      throw error;
     }
   };
 

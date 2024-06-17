@@ -106,6 +106,10 @@ th,
   opacity: 1;
 }
 
+.link {
+  @apply text-blue-600 underline hover:text-blue-800
+}
+
 @media (hover: hover) {
   .resizer {
     opacity: 0;

@@ -40,7 +40,12 @@ export function UnitRowActions({
             Reservar
           </Link>
           </DropdownMenuItem>}
-        {unit.state === 'RESERVED' && <DropdownMenuItem>Abono a Inicial</DropdownMenuItem>}
+        {unit.state === 'RESERVED' && <DropdownMenuItem
+          asChild>
+          <Link to={`/construction/projects/${project?.id}/units/${unit.id}/down-payment-installment`}>
+            Abono a Inicial
+          </Link>
+          </DropdownMenuItem>}
         <DropdownMenuSeparator />
         <DropdownMenuItem>Editar</DropdownMenuItem>
         <DropdownMenuSeparator />
