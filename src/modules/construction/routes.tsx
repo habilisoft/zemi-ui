@@ -2,12 +2,14 @@ import { BaseLayout } from "@/layouts";
 import { Construction } from "./construction";
 import { Projects } from "./projects";
 import { NewProject } from "./projects/new-project";
-import { ProjectDetails } from '@/modules/construction/projects/project-details.tsx';
-import { UnitDetails } from '@/modules/construction/projects/unit-details.tsx';
-import { ReserveUnit } from '@/modules/construction/projects/reserve-unit.tsx';
-import { AddUnits } from '@/modules/construction/projects/add-units.tsx';
-import { Samples } from '@/modules/construction/samples.tsx';
+import { ProjectDetails } from '@/modules/construction/projects/project-details';
+import { UnitDetails } from '@/modules/construction/projects/unit-details';
+import { ReserveUnit } from '@/modules/construction/projects/reserve-unit';
+import { AddUnits } from '@/modules/construction/projects/add-units';
+import { Samples } from '@/modules/construction/samples';
 import { Buyers, NewBuyer } from '@/modules/construction/buyers';
+import { DownPaymentInstallment } from '@/modules/construction/projects/down-payment-installment';
+import { BuyerDetails } from '@/modules/construction/buyers/buyer-details.tsx';
 
 const menuItems = [
   {
@@ -49,6 +51,10 @@ export const constructionRoutes = {
       element: <NewBuyer />,
     },
     {
+      path: "buyers/:buyerId",
+      element: <BuyerDetails />,
+    },
+    {
       path: "projects/new",
       element: <NewProject />,
     },
@@ -67,6 +73,10 @@ export const constructionRoutes = {
     {
       path: "projects/:projectId/units/:unitId/reserve",
       element: <ReserveUnit />,
+    },
+    {
+      path: "projects/:projectId/units/:unitId/down-payment-installment",
+      element: <DownPaymentInstallment />,
     }
   ],
 };

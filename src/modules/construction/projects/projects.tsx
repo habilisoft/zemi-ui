@@ -18,11 +18,10 @@ export function Projects() {
     {
       "header": "Nombre",
       "field": "name",
-      "render": (_cell, row: IProject) => <Link className="text-blue-600 underline hover:text-blue-800"
+      "render": (_cell, row: IProject) => <Link className="link"
                                                 to={`/construction/projects/${row.id}/details`}>{row.name}</Link>
     }
   ]
-
 
   return (
     <div className="h-full flex-1 flex-col space-y-4">

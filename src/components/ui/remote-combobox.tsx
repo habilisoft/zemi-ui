@@ -10,7 +10,7 @@ import {
   CommandItem,
   CommandList
 } from '@/components/ui/command';
-import { ComponentType, createElement, useState } from 'react';
+import { ComponentType, createElement, useEffect, useState } from 'react';
 import axios from 'axios';
 import { DialogProps } from '@/components/ui/dialog.tsx';
 
@@ -40,12 +40,19 @@ export function RemoteComboBox(
   const [showModal, setShowModal] = useState(false);
 
   const handleValueChange = async (value: string) => {
+    await search(value);
+  }
+
+  useEffect(() => {
+    search('');
+  }, []);
+
+  const search = async (value: string) => {
     if (value) {
       endpoint = endpoint + `?${displayProperty}=${value}`;
     }
     try {
       const { data } = await axios.get(endpoint);
-      console.log(data?.content);
       setData(data?.content || []);
     } catch (error) {
       console.error(error);
@@ -72,7 +79,7 @@ export function RemoteComboBox(
             variant="outline"
             role="combobox"
             className={cn(
-              "w-[200px] justify-between",
+              "justify-between",
               !selectedValue && "text-muted-foreground"
             )}
           >
@@ -82,7 +89,9 @@ export function RemoteComboBox(
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50"/>
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-[200px] p-0">
+        <PopoverContent
+          align="start"
+          className="w-full p-0">
           <Command>
             <CommandInput
               onValueChange={handleValueChange}

@@ -12,12 +12,13 @@ import { Button } from '@/components/ui/button.tsx';
 import { Plus } from 'lucide-react';
 import { Dialog } from '@/components/ui/dialog.tsx';
 import { Input } from '@/components/ui/input.tsx';
+import ProjectGeneralInfo from '@/modules/construction/projects/project-general-info';
 
 export function ProjectDetails() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(false)
   const { projectId } = useParams<{ projectId: string }>();
-  const [project, setProject] = useState<IProject | undefined>(undefined);
+  const [project, setProject] = useState<IProject>({ } as IProject);
   const projectsService = new ProjectsService(projectId);
   const [searchParams, setSearchParams] = useSearchParams();
   const [selectedTab, setSelectedTab] = useState(searchParams.get("tab") || "details");
@@ -98,12 +99,15 @@ export function ProjectDetails() {
           </Button>}
         </div>
         <TabsContent value="details">
-          Make changes to your account here.
+          <div className="gap-6">
+            <ProjectGeneralInfo project={project}/>
+            <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700"/>
+          </div>
         </TabsContent>
         <TabsContent value="units">
           <ProjectUnits project={project}/>
         </TabsContent>
       </Tabs>
     </div>
-  );
+);
 }

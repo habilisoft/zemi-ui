@@ -3,6 +3,7 @@ import { IProject, IProjectUnit, IProjectUnitPrice } from '@/types';
 import { Link } from 'react-router-dom';
 import { ProjectUnitState } from '@/modules/construction/projects/components/project-unit-state';
 import { UnitRowActions } from '@/modules/construction/projects/components/unit-row-actions.tsx';
+import Formats from '@/lib/formatters.ts';
 
 type Props = {
   project: IProject | undefined;
@@ -12,9 +13,9 @@ export function ProjectUnits( {project}: Props ) {
     {
       "header": "Nombre",
       "field": "name",
-      "render": (cell, unit: IProjectUnit) =>
+      "render": (_cell, unit: IProjectUnit) =>
         <Link className="text-blue-600 underline hover:text-blue-800"
-              to={`/construction/projects/${project?.id}/units/${cell}`}
+              to={`/construction/projects/${project?.id}/units/${unit.id}`}
               state={{ unit, project}}
         >
           {unit.name}
@@ -23,7 +24,7 @@ export function ProjectUnits( {project}: Props ) {
     {
       "header": "Valor",
       "field": "price",
-      "render": (price: IProjectUnitPrice) => new Intl.NumberFormat('es-DO', {style: 'currency', currency: price.value.currency}).format(price.value.value)
+      "render": (price: IProjectUnitPrice) =>  Formats.currency(price.value)
     },
     {
       "header": "Estado",

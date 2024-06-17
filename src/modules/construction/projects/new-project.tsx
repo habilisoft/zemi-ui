@@ -3,57 +3,70 @@ import { z } from "zod";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { ProjectsService } from '@/services/projects.service.ts';
 import { useState } from 'react';
-import { IProject } from '@/types';
+import { IDownPaymentInformation, IProject, Money } from '@/types';
 import { useNavigate } from 'react-router-dom';
+import { Messages } from '@/lib/constants.tsx';
+import ClosableAlert from '@/components/ui/closable-alert.tsx';
 
 export function NewProject() {
   const [loading, setLoading] = useState(false)
   const projectsService = new ProjectsService();
   const navigate = useNavigate();
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (data: Record<string, string | string []>) => {
+  const handleSubmit = (data: Record<string, string | string [] | Money>) => {
     setLoading(true);
-    console.log(data);
-    const projectData: IProject = {
-      name: data.name as string,
-      value: {
-        currency: data.currency as string,
-        value: parseFloat(data.unitPrice as string),
-      },
-      downPaymentInformation: {
-        downPaymentAmount: {
-          type: "percentage",
-          amount: {
-            currency: data.currency as string,
-            value: parseFloat(data.unitPrice as string),
-          },
-        },
-        downPaymentPaymentMethod: {
-          monthsToComplete: parseInt(data.monthsToComplete as string),
-          type: data.initialType as "percentage" | "upfront",
-          percentage: parseInt(data.initialPercentage as string),
-          reservationAmount: {
-            currency: data.currency as string,
-            value: parseFloat(data.unitPrice as string),
-          },
-        },
-        }
-      }
-
+    const projectData: IProject = getProjectData(data);
     const unitsToAdd = parseInt(data.qty as string);
-
     projectsService.createProject(projectData)
       .then((data: IProject) => {
         setLoading(false);
-        if(unitsToAdd === 0) {
+        if (unitsToAdd === 0) {
           navigate(`/construction/projects/${data.id}/details`);
         } else {
           navigate(`/construction/projects/${data.id}/add-units`, { state: { project: data, unitsToAdd } });
         }
-      }).catch((error) => {
-      console.error(error);
-      setLoading(false);
-    });
+      }).catch(({ response }) => {
+      setError(response?.data?.message || Messages.UNEXPECTED_ERROR);
+    }).finally(() => setLoading(false));
+  }
+
+  const getProjectData = (data: Record<string, string | string [] | Money>) => {
+    const projectData = {
+      name: data.name as string,
+      value: data.unitPrice as Money,
+      downPaymentInformation: {} as IDownPaymentInformation
+    }
+
+    switch (data.downPaymentAmountType) {
+      case "percentage":
+        projectData.downPaymentInformation.downPaymentAmount = {
+          type: "percentage",
+          percentage: parseFloat(data.downPaymentAmountPercentage as string),
+        }
+        break;
+      case "amount":
+        projectData.downPaymentInformation.downPaymentAmount = {
+          type: "amount",
+          amount: data.downPaymentAmountValue as Money,
+        }
+        break;
+    }
+
+    switch (data.downPaymentPaymentMethod) {
+      case "percentage":
+        projectData.downPaymentInformation.downPaymentPaymentMethod = {
+          type: "percentage",
+          reservationAmount: data.reservationAmount as Money,
+          monthsToComplete: parseInt(data.monthsToComplete as string),
+        }
+        break;
+      case "upfront":
+        projectData.downPaymentInformation.downPaymentPaymentMethod = {
+          type: "upfront"
+        };
+    }
+    return projectData;
   }
 
   return (
@@ -65,7 +78,8 @@ export function NewProject() {
           { label: "Nuevo Proyecto", path: "/construction/projects/new" },
         ]}
       />
-      <div className="max-w-md mx-auto mt-8">
+      <div className="max-w-md mx-auto mt-8 space-x-4">
+        {error && <ClosableAlert closable={false} color="danger">{error}</ClosableAlert>}
         <CompoundForm
           title="Nuevo Proyecto"
           sendingRequest={loading}
@@ -86,60 +100,90 @@ export function NewProject() {
               }),
             },
             {
-              type: "number",
+              type: "money",
               label: "Precio por unidad",
+              helpText: "Precio de venta de cada unidad. Puede cambiarlo luego para cada unidad.",
               name: "unitPrice",
-              defaultValue: 0,
-              validations: z.coerce
-                .number()
-                .min(1, { message: "Debe ser mayor a 0" })
+              defaultValue: { value: 1, currency: "USD" },
+              validations: z.object({
+                currency: z.string(),
+                value: z.number().min(1, { message: "Debe ser mayor a 0" })
+              }).refine(({ value }) => value > 0, { message: "Debe ser mayor a 0" }),
             },
             {
-              label: "Moneda",
-              name: "currency",
-              defaultValue: "USD",
-              type: "select",
+              type: "radioGroup",
+              label: "Tipo de Inicial",
               options: [
-                { label: "USD (Dólares)", value: "USD" },
-                { label: "DOP (Pesos Dominicanos)", value: "DOP" }
+                { label: "Porcentaje del valor total", value: "percentage" },
+                { label: "Monto fijo", value: "amount" },
               ],
+              name: "downPaymentAmountType",
+              defaultValue: "percentage",
               validations: z.string(),
             },
             {
               type: "number",
               label: "Porcentaje Inicial",
               addOn: "%",
-              name: "initialPercentage",
-              defaultValue: 0,
+              name: "downPaymentAmountPercentage",
+              helpText: "Porcentaje del valor total de la unidad a pagar como inicial.",
+              showIf: [{ field: "downPaymentAmountType", value: "percentage" }],
+              defaultValue: 1,
               validations: z.coerce
                 .number()
                 .min(1, { message: "Debe ser mayor a 0" })
                 .max(100, { message: "Debe ser menor a 100" }),
             },
             {
+              type: "money",
+              label: "Monto Inicial",
+              helpText: "Monto fijo a pagar como inicial",
+              name: "downPaymentAmountValue",
+              showIf: [{ field: "downPaymentAmountType", value: "amount" }],
+              defaultValue: { value: 1, currency: "USD" },
+              validations: z.object({
+                currency: z.string(),
+                value: z.number().min(1, { message: "Debe ser mayor a 0" })
+              }).refine(({ value }) => value > 0, { message: "Debe ser mayor a 0" }),
+            },
+            {
               type: "radioGroup",
-              label: "Pago de inicial",
+              label: "Pago de Inicial",
               options: [
-                { label: "Porcentage de precio de la unidad", value: "percentage" },
-                { label: "Monto Fijo", value: "upfront" },
+                { label: "Separación", value: "percentage" },
+                { label: "Pago por adelantado", value: "upfront" },
               ],
-              name: "initialType",
+              name: "downPaymentPaymentMethod",
               defaultValue: "percentage",
               validations: z.string(),
             },
             {
+              type: "money",
+              label: "Monto Separación",
+              helpText: "Monto a pagar para separar la unidad.",
+              name: "reservationAmount",
+              showIf: [{ field: "downPaymentPaymentMethod", value: "percentage" }],
+              defaultValue: { value: 1, currency: "USD" },
+              validations: z.object({
+                currency: z.string(),
+                value: z.number().min(1, { message: "Debe ser mayor a 0" })
+              }).refine(({ value }) => value > 0, { message: "Debe ser mayor a 0" }),
+            },
+            {
               type: "number",
               label: "Meses para completar el inicial",
+              showIf: [{ field: "downPaymentPaymentMethod", value: "percentage" }],
               name: "monthsToComplete",
-              defaultValue: 0,
+              defaultValue: 1,
               validations: z.coerce
                 .number()
                 .min(1, { message: "Debe ser mayor a 0" })
             },
             {
               label: "Cantidad de Unidades",
+              helpText: "Cantidad de unidades a crear inicialmente. Puede crear más unidades luego.",
               name: "qty",
-              defaultValue: 0,
+              defaultValue: 1,
               type: "number",
               placeholder: "",
               validations: z.coerce

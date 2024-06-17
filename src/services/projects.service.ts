@@ -1,5 +1,11 @@
 import axios from "axios";
-import { IProject, IProjectUnit, IProjectUnitRequest, IReserveUnitData } from '@/types';
+import {
+  DownPaymentInstallmentRequest,
+  IProject,
+  IProjectUnitRequest,
+  IReserveUnitData,
+  IUnitResponse
+} from '@/types';
 
 export class ProjectsService {
   readonly projects_endpoint: string;
@@ -36,6 +42,26 @@ export class ProjectsService {
     }
   }
 
+  async getUnitDownPaymentDetails(name: string) {
+    try {
+      const { data } = await axios.get(this.projects_endpoint + "/" + this.projectId + "/units/" + name + "/down-payment");
+      return data;
+    } catch (error) {
+      console.error(`[ProjectsService][getUnitDownPaymentDetails]: ${error}`);
+      throw error;
+    }
+  }
+
+  async getUnit(unitId: string | undefined): Promise<IUnitResponse> {
+    try {
+      const { data } = await axios.get(this.projects_endpoint + "/" + this.projectId + "/units/" + unitId);
+      return data;
+    } catch (error) {
+      console.error(`[ProjectsService][getUnit]: ${error}`);
+      throw error;
+    }
+  }
+
   /*
     *==================
     * POST requests
@@ -47,16 +73,6 @@ export class ProjectsService {
       return data;
     } catch (error) {
       console.error(`[ProjectsService][createProject]: ${error}`);
-    }
-  }
-
-  async getUnit(unitId: string | undefined): Promise<IProjectUnit> {
-    try {
-      const { data } = await axios.get(this.projects_endpoint + "/" + this.projectId + "/units/" + unitId);
-      return data;
-    } catch (error) {
-      console.error(`[ProjectsService][getUnit]: ${error}`);
-      throw error;
     }
   }
 
@@ -76,6 +92,17 @@ export class ProjectsService {
       return data;
     } catch (error) {
       console.error(`[ProjectsService][reserveUnit]: ${error}`);
+      throw error;
+    }
+
+  }
+
+  async downPaymentInstallment(name: string, requestData: DownPaymentInstallmentRequest) {
+    try {
+      const { data } = await axios.post(this.projects_endpoint + "/" + this.projectId + "/units/" + name + "/down-payment/installments", requestData);
+      return data;
+    } catch (error) {
+      console.error(`[ProjectsService][downPaymentInstallment]: ${error}`);
       throw error;
     }
 

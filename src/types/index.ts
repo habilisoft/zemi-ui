@@ -50,6 +50,7 @@ export interface IInputFormSchema {
   label: string;
   addOn?: string;
   showIf?: ShowCondition[];
+  helpText?: string;
   type:
     | "text"
     | "number"
@@ -60,6 +61,7 @@ export interface IInputFormSchema {
     | "combobox"
     | "remote-combobox"
     | "password"
+    | "money"
     | "date";
   placeholder?: string;
   name: string;
@@ -71,12 +73,14 @@ export interface IInputFormSchema {
     createModal: React.ComponentType<DialogProps>;
     selectedValue?: Record<string, string> | undefined;
   }
-  defaultValue: string | number | string[] | null;
+  defaultValue: string | number | string[] | null | Money;
   validations:
     | ZodString
     | ZodNumber
     | ZodBoolean
     | ZodEffects<ZodArray<ZodString, "many">, string[], string[]>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    | ZodEffects<ZodObject<any>>
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     | ZodEnum<any>
     | ZodOptional<ZodString>
@@ -106,23 +110,37 @@ export interface IProject {
   name: string;
   value: Money;
   downPaymentInformation: IDownPaymentInformation;
+  pricePerUnit?: IPricePerUnit;
+  units?: IProjectUnit[];
+}
+
+export interface IPricePerUnit {
+  value: Money;
+  downPaymentInformation: IDownPaymentInformation;
 }
 
 export interface IDownPaymentInformation {
   downPaymentAmount: IDownPaymentAmount;
+  amount?: IDownPaymentAmount;
   downPaymentPaymentMethod: IDownPaymentPaymentMethod;
+  paymentMethod?: IDownPaymentPaymentMethod;
 }
 
 export interface IDownPaymentAmount {
-  type: "percentage" | "upfront";
-  amount: Money;
+  type: "percentage" | "amount";
+  amount?: Money | IPercentageValue;
+  percentage?: IPercentageValue | number;
+}
+
+export interface IPercentageValue {
+  value: number;
 }
 
 export interface IDownPaymentPaymentMethod {
-  monthsToComplete: number;
+  monthsToComplete?: number;
   type: "percentage" | "upfront";
-  percentage: number;
-  reservationAmount: Money;
+  percentage?: number;
+  reservationAmount?: Money;
 }
 export interface IProjectUnit {
   id: IProjectUnitId;
@@ -134,7 +152,8 @@ export interface IProjectUnit {
 }
 export interface IProjectUnitRequest {
   name: string,
-  value: Money
+  value: Money,
+  downPaymentInformation?: IDownPaymentInformation
 }
 
 export interface IProjectUnitPrice {
@@ -160,4 +179,49 @@ export interface IBuyer {
 export interface IReserveUnitData {
   buyer: number;
   amount: Money;
+}
+
+export interface DownPaymentInstallmentRequest {
+  amount: Money;
+}
+
+export interface DownPaymentInstallment {
+  id: number;
+  amount: Money;
+  date: string;
+  balance: Money;
+}
+
+export interface IChangePasswordRequest {
+  currentPassword: string;
+  newPassword: string;
+}
+
+export interface IUnitResponse {
+  id: number;
+  name: string;
+  state: "AVAILABLE" | "RESERVED" | "SOLD";
+  price: IUnitResponsePrice;
+  auditInfo: IAuditInfo;
+}
+
+export interface IUnitResponsePrice {
+  value: Money;
+  downPaymentInformation: IDownPaymentInformation;
+}
+
+export interface IAuditInfo {
+  createdAt: string;
+  createdBy: string;
+  updatedAt: string;
+  updatedBy: string;
+}
+
+export interface IDownPaymentResponse {
+  installments: DownPaymentInstallment[];
+  state: "PENDING" | "PAID" | "CANCELLED";
+  date: string;
+  dueDate: string;
+  amount: Money;
+  balance: Money;
 }

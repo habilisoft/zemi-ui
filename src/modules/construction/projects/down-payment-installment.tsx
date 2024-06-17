@@ -1,24 +1,21 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ProjectsService } from '@/services/projects.service.ts';
-import { IBuyer, IProject, IProjectUnit, IReserveUnitData, Money } from '@/types';
+import { DownPaymentInstallmentRequest, IProject, IProjectUnit, Money } from '@/types';
 import { Breadcrumb } from '@/components/ui/breadcrumb.tsx';
 import { Messages } from '@/lib/constants.tsx';
-import { RemoteComboBox } from '@/components/ui/remote-combobox.tsx';
-import { CreateBuyerModal } from '@/modules/construction/buyers/create-buyer-modal.tsx';
 import { z } from 'zod';
 import { CompoundForm } from '@/components/ui/compound-form.tsx';
 import { toast } from 'sonner';
 import ClosableAlert from '@/components/ui/closable-alert.tsx';
 
-export function ReserveUnit() {
+export function DownPaymentInstallment() {
   const [unit, setUnit] = useState<IProjectUnit>({ } as IProjectUnit );
   const { projectId, unitId } = useParams<{ projectId: string, unitId: string }>();
   const [project, setProject] = useState<IProject | undefined>({} as IProject);
   const projectService = new ProjectsService(projectId);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [buyer, setBuyer] = useState<IBuyer | undefined>();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -41,18 +38,16 @@ export function ReserveUnit() {
       .finally(() => setLoading(false));
   }, []);
 
-  const reserverUnit = (data: Record<string, string | string[] | object | number>) => {
-    const d = data as { buyer: IBuyer, salePrice: number, currency: string };
-    const requestData: IReserveUnitData = {
-      buyer: d.buyer.id,
+  const downPaymentInstallment = (data: Record<string, string | string[] | object | number>) => {
+    const requestData: DownPaymentInstallmentRequest = {
       amount: data.amount as Money,
     };
 
     setLoading(true);
-    projectService.reserveUnit(unit.name, requestData)
+    projectService.downPaymentInstallment(unit.name, requestData)
       .then(() => {
-        toast.success('Unidad reservada correctamente');
-        navigate(`/construction/projects/${projectId}/details?tab=units`)
+        toast.success('Abono a inicial aplicado correctamente');
+        navigate(`/construction/projects/${projectId}/units/${unit.id}`)
       })
       .catch(({response}) => {
         setError(response?.data?.message || Messages.UNEXPECTED_ERROR);
@@ -69,7 +64,7 @@ export function ReserveUnit() {
           { label: project?.name || "", path: `/construction/projects/${project?.id}/details` },
           { label: "Unidades" || "", path: `/construction/projects/${project?.id}/details?tab=units` },
           { label: unit?.name || "", path: `/construction/projects/${project?.id}/units/${unit?.id}` },
-          { label: "Reservar", path: "" }
+          { label: "Abono a inicial", path: "" }
         ]}
       />
 
@@ -77,35 +72,17 @@ export function ReserveUnit() {
         {error && <ClosableAlert closable={false} color="danger">{error}</ClosableAlert>}
         <CompoundForm
           sendingRequest={loading}
-          onSubmit={reserverUnit}
-          title="Reservar Unidad"
-          submitButtonText="Reservar Unidad"
+          onSubmit={downPaymentInstallment}
+          title="Abono a Inicial"
+          submitButtonText="Aplicar Abono"
           onCancel={() => navigate(-1)}
           alertDialogText="Confirmar"
-          alertDialogDesc="¿Está seguro que desea cancelar la reserva de esta unidad?"
+          alertDialogDesc="¿Está seguro que desea cancelar esta operación?"
+          alertAcceptButtonText="Si, estoy seguro"
           confirmCancel={true}
           inputs={[
             {
-              label: "Comprador",
-              name: "buyer",
-              defaultValue: "",
-              type: "remote-combobox",
-              remoteComboProps: {
-                createModal: CreateBuyerModal,
-                endpoint: "/api/v1/buyers",
-                displayProperty: "name",
-                valueProperty: "id",
-              },
-              placeholder: "Seleccione un cliente",
-              validations: z.object({
-                id: z.number(),
-                name: z.string(),
-              }, {
-                message: "Seleccione un comprador"
-              }),
-            },
-            {
-              label: "Precio Reserva",
+              label: "Monto Abono",
               name: "amount",
               type: "money",
               defaultValue: { value: 1, currency: "USD" },
@@ -117,15 +94,6 @@ export function ReserveUnit() {
           ]}
         />
       </div>
-      <RemoteComboBox
-        createModal={CreateBuyerModal}
-        endpoint="/api/v1/buyers"
-        handleSelect={(value: Record<string, string>) => setBuyer(value as IBuyer)}
-        displayProperty="name"
-        valueProperty="id"
-        selectedValue={buyer as Record<string, string>}
-        placeholder="Seleccione un cliente"/>
-
     </div>
   );
 }
