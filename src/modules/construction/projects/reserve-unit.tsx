@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ProjectsService } from '@/services/projects.service.ts';
-import { IBuyer, IProject, IProjectUnit, IReserveUnitData, Money } from '@/types';
+import { IBuyer, IProject, IReserveUnitData, IUnitResponse, Money } from '@/types';
 import { Breadcrumb } from '@/components/ui/breadcrumb.tsx';
 import { Messages } from '@/lib/constants.tsx';
 import { RemoteComboBox } from '@/components/ui/remote-combobox.tsx';
@@ -12,7 +12,7 @@ import { toast } from 'sonner';
 import ClosableAlert from '@/components/ui/closable-alert.tsx';
 
 export function ReserveUnit() {
-  const [unit, setUnit] = useState<IProjectUnit>({ } as IProjectUnit );
+  const [unit, setUnit] = useState<IUnitResponse>({ } as IUnitResponse );
   const { projectId, unitId } = useParams<{ projectId: string, unitId: string }>();
   const [project, setProject] = useState<IProject | undefined>({} as IProject);
   const projectService = new ProjectsService(projectId);
