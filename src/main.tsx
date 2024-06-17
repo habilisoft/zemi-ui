@@ -22,6 +22,8 @@ import { getSubdomain } from '@/lib/utils';
 import axios from "axios";
 import { Receipt } from '@/modules/construction/payment-receipt/receipt.tsx';
 import { userSettingsRoutes } from '@/modules/user-settings';
+import { companySettingsRoutes } from '@/modules/company-settings';
+import { CompanyInfoProvider } from '@/context/company-context.tsx';
 
 
 axios.defaults.headers.common['TenantId'] = getSubdomain();
@@ -44,7 +46,8 @@ const router = createBrowserRouter([
       accountingRoutes,
       payrollRoutes,
       loansRoutes,
-      userSettingsRoutes
+      userSettingsRoutes,
+      companySettingsRoutes
     ],
     errorElement: <div>Error inesperado</div>,
   },
@@ -82,7 +85,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <RouterProvider router={router}/>
+        <CompanyInfoProvider>
+          <RouterProvider router={router}/>
+        </CompanyInfoProvider>
       </AuthProvider>
     </QueryClientProvider>
   </React.StrictMode>

@@ -60,7 +60,7 @@ interface Props extends IFormSchema {
   columns?: number;
   sendingRequest: boolean;
   onSubmit: (data: Record<string, string | string[]>) => void;
-  onCancel?: () => void;
+  onCancel?: () => void | undefined;
   alertDialogText?: string;
   alertDialogDesc?: string;
   labelsClassName?: string;

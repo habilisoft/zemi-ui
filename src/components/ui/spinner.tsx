@@ -10,7 +10,8 @@ type SpinnerType = {
 
 enum Color {
   DEFAULT = "#2564eb",
-  WHITE = "white"
+  WHITE = "white",
+  YELLOW = "#fbbf24"
 }
 
 const Spinner : React.FC<SpinnerType> = ({ color = Color.DEFAULT, className = "" }) => <CgSpinner color={color} className={classNames("animate-spin h-6 w-6", className)}/>;
