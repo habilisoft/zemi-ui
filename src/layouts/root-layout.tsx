@@ -1,4 +1,4 @@
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet, useNavigate } from "react-router-dom";
 import { Toaster } from "@/components/ui/sonner";
 // import ls from "@livesession/sdk";
 import { Header } from "@/components/header";
@@ -6,8 +6,10 @@ import { Footer } from "@/components/footer";
 import { useCompoundStore } from '@/stores/compound-store';
 import { shallow } from 'zustand/shallow';
 import { LocalStorageKeys } from "@/lib/constants";
+import { PageLoader } from '@/components/page-loader';
 
 export const RootLayout = () => {
+  const navigate = useNavigate();
   // useEffect(() => {
   //   ls.init(import.meta.env.VITE_LIVE_SESSION_CODE);
   //   ls.newPageView();
@@ -16,10 +18,14 @@ export const RootLayout = () => {
   const {
     authUser,
     authUserLogout,
+    companyInfo,
+    companyInfoLoaded,
   } = useCompoundStore(
     (state) => ({
       authUser: state.authUser,
       authUserLogout: state.authUserLogout,
+      companyInfo: state.companyInfo,
+      companyInfoLoaded: state.companyInfoLoaded,
     }),
     shallow
   );
@@ -29,17 +35,25 @@ export const RootLayout = () => {
       LocalStorageKeys.REDIRECT_URL,
       window.location.pathname + window.location.search
     );
-    return <Navigate to="/auth/login" />;
+    return <Navigate to="/auth/login"/>;
+  }
+
+  if (companyInfoLoaded && !companyInfo && window.location.pathname !== '/company-settings/edit') {
+    navigate('/company-settings/edit');
+  }
+
+  if (!companyInfoLoaded) {
+    return <PageLoader/>
   }
 
   return (
     <div className="flex flex-col h-screen">
-      <Header />
+      <Header/>
       <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
-        <Outlet />
+        <Outlet/>
       </div>
-      <Footer />
-      <Toaster position="top-right" richColors />
+      <Footer/>
+      <Toaster position="top-right" richColors/>
     </div>
   );
 };

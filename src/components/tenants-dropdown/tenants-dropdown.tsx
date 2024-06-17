@@ -1,24 +1,25 @@
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
+  DropdownMenuContent, DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { ChevronDown } from "lucide-react";
-import { useState } from "react";
-
-const tenants = [
-  { title: "Baldom", value: "Baldom" },
-  { title: "Arenque", value: "Arenque" },
-  { title: "Bagre", value: "Bagre" },
-  { title: "Tilapia", value: "Tilapia" },
-];
+import { useCompoundStore } from '@/stores/compound-store.ts';
+import { shallow } from 'zustand/shallow';
+import { Link } from 'react-router-dom';
+import { GrUserSettings } from 'react-icons/gr';
 
 export const TenantsDropdown = () => {
-  const [tenant, setTenant] = useState(tenants[0].value);
+  const {
+    companyInfo
+  } = useCompoundStore(
+    (state) => ({
+      companyInfo: state.companyInfo,
+    }),
+    shallow
+  );
 
   return (
     <DropdownMenu>
@@ -28,25 +29,19 @@ export const TenantsDropdown = () => {
             "font-bold focus-visible:ring-0 focus-visible:ring-offset-0"
           )}
         >
-          {tenants.find((c) => c.value === tenant)?.title || ""}
+          {companyInfo?.name || "Empresa"}
           <ChevronDown size={16} className="ml-2" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end">
-        <DropdownMenuRadioGroup
-          value={tenant}
-          onValueChange={(value) => setTenant(value)}
-        >
-          {tenants.map((tenant) => (
-            <DropdownMenuRadioItem
-              key={tenant.value}
-              value={tenant.value}
-              className="py-2 cursor-pointer"
-            >
-              {tenant.title}
-            </DropdownMenuRadioItem>
-          ))}
-        </DropdownMenuRadioGroup>
+        <DropdownMenuItem
+          asChild
+          className="cursor-pointer gap-2 py-2">
+          <Link to={`/company-settings`}>
+            <GrUserSettings size={18}/>
+            Ajustes de empresa
+          </Link>
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
