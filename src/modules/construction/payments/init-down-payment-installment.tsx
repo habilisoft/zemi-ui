@@ -1,28 +1,41 @@
-import { Breadcrumb } from '@/components/ui/breadcrumb.tsx';
-import PageTitle from '@/components/ui/page-title.tsx';
-import { ProjectsService } from '@/services/projects.service.ts';
+import { Breadcrumb } from '@/components/ui/breadcrumb';
+import PageTitle from '@/components/ui/page-title';
+import { RemoteComboBox } from '@/components/ui/remote-combobox';
 import { useEffect, useState } from 'react';
-import { IProject } from '@/types';
-import { CompoundForm } from '@/components/ui/compound-form.tsx';
-import { z } from "zod";
+import { IProjectResponse, IProjectUnitResponse } from '@/types';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Label } from '@/components/ui/label.tsx';
+import { Button } from '@/components/ui/button.tsx';
+import { useNavigate } from 'react-router-dom';
 
 export function InitDownPaymentInstallment() {
-  const projectsService = new ProjectsService();
-  const [projects, setProjects] = useState<IProject[]>();
+  const [selectedProject, setSelectedProject] = useState<IProjectResponse>();
+  const [selectedUnit, setSelectedUnit] = useState<IProjectUnitResponse>();
+  const navigate = useNavigate();
+
+  const handleSelect = (data: Record<string, never>) => {
+    const project = {
+      id: data.id,
+      name: data.name,
+      units: data.units,
+      value: data.value,
+      downPaymentInformation: data.downPaymentInformation,
+      pricePerUnit: data.pricePerUnit,
+    } as IProjectResponse;
+
+    setSelectedProject(project);
+  }
+
+  const handleSelectUnit = (data: string) => {
+    console.log("data", data)
+    const unit = selectedProject?.units?.find((unit) => unit.id.toString() === data);
+    console.log("unit", unit)
+    setSelectedUnit(unit);
+  }
 
   useEffect(() => {
-    projectsService.getProjects()
-      .then((data) => {
-        setProjects(data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }, []);
-
-  const onSubmit = (data: Record<string, string | string[]>) => {
-    console.log(data);
-  }
+    console.log("selectedUnit", selectedUnit)
+  }, [selectedUnit]);
 
   return (
     <div className="h-full flex-1 flex-col space-y-4">
@@ -36,24 +49,47 @@ export function InitDownPaymentInstallment() {
         <PageTitle title="Cuota de inicial" subtitle="Pagos"/>
       </div>
 
-      <CompoundForm
-        sendingRequest={false}
-        onSubmit={onSubmit}
-        submitButtonText="Continuar"
-        inputs={
-          [
-            {
-              label: "Proyecto",
-              name: "project",
-              type: "select",
-              options: projects?.map((project) => ({
-                value: String(project?.id), label: project.name
-              })),
-              validations: z.string(),
-              defaultValue: String(projects?.[0]?.id),
-            },
-          ]
-        }/>
+      <div className="flex-col">
+        <div>
+          <Label>Seleccione el proyecto</Label>
+        </div>
+        <div className="w-full">
+          <RemoteComboBox
+            endpoint="/api/v1/projects"
+            handleSelect={(data) => handleSelect(data as Record<string, never>)}
+            displayProperty="name"
+            selectedValue={selectedProject ? { id: selectedProject?.id, name: selectedProject?.name } : undefined}
+            valueProperty="id"
+            placeholder="Seleccione un projecto"/>
+        </div>
+      </div>
+
+      <div className="flex-col">
+        <div>
+          <Label>Seleccione la unidad</Label>
+        </div>
+        <div className="w-full">
+          <Select onValueChange={handleSelectUnit} defaultValue={undefined}>
+            <SelectTrigger>
+              <SelectValue placeholder="Seleccione una unidad"/>
+            </SelectTrigger>
+            <SelectContent>
+              {selectedProject?.units?.map((option) => (
+                <SelectItem key={option.id} value={option.id.toString()}>
+                  {option.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      <Button
+        disabled={!selectedUnit}
+        onClick={() => navigate(`/construction/projects/${selectedProject?.id}/units/${selectedUnit?.id}/down-payment-installment`)}
+      >
+       Continuar
+      </Button>
 
     </div>
   );

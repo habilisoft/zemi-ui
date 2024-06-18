@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ProjectsService } from '@/services/projects.service.ts';
-import { DownPaymentInstallmentRequest, IProject, IUnitResponse, Money } from '@/types';
+import { DownPaymentInstallmentRequest, IBuyer, IProject, IUnitResponse, Money } from '@/types';
 import { Breadcrumb } from '@/components/ui/breadcrumb.tsx';
 import { Messages } from '@/lib/constants.tsx';
 import { z } from 'zod';
@@ -39,9 +39,7 @@ export function DownPaymentInstallment() {
   }, []);
 
   const downPaymentInstallment = (data: Record<string, string | string[] | object | number>) => {
-    const requestData: DownPaymentInstallmentRequest = {
-      amount: data.amount as Money,
-    };
+    const requestData = getRequestData(data);
 
     setLoading(true);
     projectService.downPaymentInstallment(unit.name, requestData)
@@ -53,6 +51,24 @@ export function DownPaymentInstallment() {
         setError(response?.data?.message || Messages.UNEXPECTED_ERROR);
       })
       .finally(() => setLoading(false));
+  }
+
+  const getRequestData = (data: Record<string, string | string[] | object | number>): DownPaymentInstallmentRequest => {
+    const d = data as { buyer: IBuyer, cashAmount: Money, paymentMethod: string };
+
+    const requestData: DownPaymentInstallmentRequest = {
+      payment: {
+        paymentMethods: []
+      }
+    };
+
+    if (d.paymentMethod.includes("CASH")) {
+      requestData.payment.paymentMethods.push({
+        amount: d.cashAmount,
+        type: "CASH"
+      });
+    }
+    return requestData;
   }
 
   return (
@@ -82,10 +98,28 @@ export function DownPaymentInstallment() {
           confirmCancel={true}
           inputs={[
             {
-              label: "Monto Abono",
-              name: "amount",
+              label: "Forma de Pago",
+              name: "paymentMethod",
+              type: "checkbox",
+              defaultValue: ["CASH"],
+              options: [
+                { label: "Efectivo", value: "CASH" },
+                //{ label: "Transferencia", value: "TRANSFER" },
+                //{ label: "Cheque", value: "CHECK" },
+                //{ label: "Tarjeta de Crédito", value: "CARD"}
+              ],
+              validations: z
+                .array(z.string())
+                .refine((value) => value.some((item) => item), {
+                  message: "You have to select at least one option.",
+                }),
+            },
+            {
+              label: "Monto Pago Efectivo",
+              name: "cashAmount",
               type: "money",
               defaultValue: { value: 1, currency: "USD" },
+              showIf: [{ field: "paymentMethod", value: "CASH", includes: "CASH" }],
               validations: z.object({
                 currency: z.string(),
                 value: z.number().min(1, { message: "Debe ser mayor a 0" })

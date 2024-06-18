@@ -1,5 +1,5 @@
 import SimpleDataTable from '@/components/ui/simple-data-table';
-import { DownPaymentInstallment, Money } from '@/types';
+import { DownPaymentInstallment, IPaymentResponse, Money } from '@/types';
 import Formats from '@/lib/formatters.ts';
 import Sorting from '@/lib/sorting.ts';
 
@@ -27,8 +27,8 @@ export function InstallmentsTable(
         },
         {
           header: 'Monto',
-          field: 'amount',
-          render: (price: Money) => Formats.currency(price)
+          field: 'payment',
+          render: (payment: IPaymentResponse) => Formats.currency(payment.amount)
         },
         {
           header: 'Balance',

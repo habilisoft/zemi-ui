@@ -19,7 +19,7 @@ interface Props {
   handleSelect: (value: Record<string, string>) => void;
   displayProperty: string;
   valueProperty: string;
-  selectedValue?: Record<string, string> | undefined;
+  selectedValue?: Record<string, string | number | undefined> | undefined;
   placeholder: string;
   createModal?: ComponentType<DialogProps>;
 }
@@ -79,7 +79,7 @@ export function RemoteComboBox(
             variant="outline"
             role="combobox"
             className={cn(
-              "justify-between",
+              "justify-between w-full",
               !selectedValue && "text-muted-foreground"
             )}
           >
@@ -119,7 +119,7 @@ export function RemoteComboBox(
                     {option[displayProperty]}
                   </CommandItem>
                 ))}
-                <CommandItem>
+                {createModal && <CommandItem>
                   <Button
                     onClick={() => setShowModal(true)}
                     variant="link"
@@ -127,7 +127,7 @@ export function RemoteComboBox(
                   >
                     Agregar nuevo
                   </Button>
-                </CommandItem>
+                </CommandItem>}
               </CommandList>
             </CommandGroup>
           </Command>
