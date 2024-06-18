@@ -4,7 +4,6 @@ import { Breadcrumb } from '@/components/ui/breadcrumb';
 import PageTitle from '@/components/ui/page-title';
 import { ProjectsService } from '@/services/projects.service.ts';
 import {
-    DownPaymentInstallment,
     IBuyer,
     IDownPaymentResponse,
     IProject,
@@ -27,7 +26,6 @@ export function UnitDetails() {
   const projectService = new ProjectsService(projectId);
   const [searchParams, setSearchParams] = useSearchParams();
   const [selectedTab, setSelectedTab] = useState(searchParams.get("tab") || "details");
-  const [downPaymentInstallments, setDownPaymentInstallments] = useState<DownPaymentInstallment[]>([]);
   const [, setLoadingProject] = useState(true);
   const [loadingUnit, setLoadingUnit] = useState(true);
   const [buyer, setBuyer] = useState<IBuyer>({} as IBuyer);
@@ -42,8 +40,7 @@ export function UnitDetails() {
       if (unitResponse.unit.state != 'AVAILABLE' && unitResponse.downPayment) {
         const downPayment = unitResponse.downPayment.downPayment;
         setDownPayment(downPayment);
-          unitResponse.downPayment.buyer && setBuyer(unitResponse.downPayment.buyer);
-        setDownPaymentInstallments(downPayment.installments);
+        unitResponse.downPayment.buyer && setBuyer(unitResponse.downPayment.buyer);
       }
       setUnitDetail(unitResponse);
       setUnit(unitResponse.unit)
@@ -104,7 +101,7 @@ export function UnitDetails() {
           </div>}
         </TabsContent>
         <TabsContent value="installments">
-          <InstallmentsTable downPaymentInstallments={downPaymentInstallments}/>
+          <InstallmentsTable downPayment={downPayment}/>
         </TabsContent>
       </Tabs>
     </div>

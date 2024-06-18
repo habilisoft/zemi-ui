@@ -260,11 +260,18 @@ export interface IAuditInfo {
 
 export interface IDownPaymentResponse {
   installments: DownPaymentInstallment[];
+  reservation?: IUnitReservation;
   state: "PENDING" | "PAID" | "CANCELLED";
   date: string;
   dueDate: string;
   amount: Money;
   balance: Money;
+}
+
+export interface IUnitReservation {
+  date: string;
+  amount: Money;
+  monthsToComplete: number;
 }
 
 export interface ICompanyInformation {
@@ -284,6 +291,7 @@ export interface MenuItem {
 }
 
 export interface IPaymentResponse {
+  id: number;
   amount: Money
   paymentInformation: {
     paymentMethods: IPaymentMethod[]
