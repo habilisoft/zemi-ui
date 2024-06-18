@@ -6,7 +6,7 @@ export function useProjects(searchTerm: string) {
 
   const { isLoading, data, refetch } = useQuery({
     queryKey: ["projects", searchTerm],
-    queryFn: () => projectsService.getProjects(searchTerm),
+    queryFn: () => projectsService.getProjects(),
   });
 
   return {
