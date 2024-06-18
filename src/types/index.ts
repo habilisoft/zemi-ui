@@ -44,7 +44,7 @@ export interface IConfirmationDialogOptions {
 export interface ShowCondition {
   field: string;
   value: string | number | string[] | null;
-  includes: string
+  includes?: string
 }
 
 export interface IInputFormSchema {
