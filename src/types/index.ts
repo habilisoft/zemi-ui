@@ -44,6 +44,7 @@ export interface IConfirmationDialogOptions {
 export interface ShowCondition {
   field: string;
   value: string | number | string[] | null;
+  includes: string
 }
 
 export interface IInputFormSchema {
@@ -114,6 +115,15 @@ export interface IProject {
   units?: IProjectUnit[];
 }
 
+export interface IProjectResponse {
+  id?: number;
+  name: string;
+  value: Money;
+  downPaymentInformation: IDownPaymentInformation;
+  pricePerUnit?: IPricePerUnit;
+  units?: IProjectUnitResponse[];
+}
+
 export interface IPricePerUnit {
   value: Money;
   downPaymentInformation: IDownPaymentInformation;
@@ -152,6 +162,15 @@ export interface IProjectUnit {
   currency: string;
 }
 
+export interface IProjectUnitResponse {
+  id: number;
+  name: string;
+  project: IProject;
+  state: "AVAILABLE" | "RESERVED" | "SOLD";
+  value: number;
+  currency: string;
+}
+
 export interface IProjectUnitRequest {
   name: string,
   value: Money,
@@ -181,11 +200,20 @@ export interface IBuyer {
 
 export interface IReserveUnitData {
   buyer: number;
-  amount: Money;
+  payment: {
+    paymentMethods: IPaymentMethod []
+  }
 }
 
-export interface DownPaymentInstallmentRequest {
+export interface IPaymentMethod {
+  last4?: string;
   amount: Money;
+  type?: "CARD" | "CASH" | "TRANSFER" | "CHECK";
+}
+export interface DownPaymentInstallmentRequest {
+  payment: {
+    paymentMethods: IPaymentMethod []
+  }
 }
 
 export interface DownPaymentInstallment {
@@ -237,4 +265,17 @@ export interface ICompanyInformation {
   website?: string,
   logo?: string,
   document?: string
+}
+
+export interface MenuItem {
+  title: string;
+  path: string;
+  children?: MenuItem[];
+}
+
+export interface IPaymentResponse {
+  amount: Money
+  paymentInformation: {
+    paymentMethods: IPaymentMethod[]
+  }
 }

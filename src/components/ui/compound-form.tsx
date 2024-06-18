@@ -324,8 +324,7 @@ export function CompoundForm(props: Props) {
             </RadioGroup>
           </FormControl>
         );
-      case "money":
-      {
+      case "money": {
         const value = field.value as Money;
         return (
           <FormControl>
@@ -356,13 +355,16 @@ export function CompoundForm(props: Props) {
                 placeholder="valor"
                 type="number"
                 value={value.value}
-                onChange={(e) => form.setValue(field.name, { ...value, value: Number.parseInt(e.target.value) } as never)}
+                onChange={(e) => form.setValue(field.name, {
+                  ...value,
+                  value: Number.parseInt(e.target.value)
+                } as never)}
                 className="form-input"
               />
             </div>
           </FormControl>
         )
-        }
+      }
       default:
         return null;
     }
@@ -391,10 +393,14 @@ export function CompoundForm(props: Props) {
             .filter((inputData) => {
               if (!inputData.showIf) return true;
               return inputData.showIf.every((condition) => {
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-expect-error
-                const show =  form.watch(condition.field).toString() === condition.value?.toString();
-                if(!show) {
+                const show = condition.includes
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-expect-error
+                  ? form.watch(condition.field).includes(condition.value?.toString())
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-expect-error
+                  : form.watch(condition.field).toString() === condition.value?.toString();
+                if (!show) {
                   form.setValue(inputData.name as never, inputData.defaultValue as never);
                 }
                 return show;

@@ -87,11 +87,11 @@ export function AddUnits() {
       downPaymentAmount.amount = downPaymentInformation?.amount?.amount as Money;
     }
     return {
-      downPaymentAmount: downPaymentAmount,
-      downPaymentPaymentMethod: {
+      amount: downPaymentAmount,
+      paymentMethod: {
         monthsToComplete: downPaymentInformation?.paymentMethod?.monthsToComplete,
-        reservationAmount: downPaymentInformation?.paymentMethod?.reservationAmount,
-        type: downPaymentInformation?.paymentMethod?.reservationAmount ? "percentage" : "upfront"
+        amount: downPaymentInformation?.paymentMethod?.reservationAmount,
+        type: downPaymentInformation?.paymentMethod?.reservationAmount ? "reservation" : "upfront"
       }
     }
   }
