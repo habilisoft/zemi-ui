@@ -232,8 +232,18 @@ export interface IUnitResponse {
   id: number;
   name: string;
   state: "AVAILABLE" | "RESERVED" | "SOLD";
-  price: IUnitResponsePrice;
+  price?: IUnitResponsePrice;
   auditInfo: IAuditInfo;
+}
+export interface IUnitDetailResponse {
+  unit: IUnitResponse;
+  priceFromProject?: IUnitResponsePrice;
+  auditInfo: IAuditInfo;
+  downPayment?: IDownPaymentWithBuyerResponse;
+}
+export interface IDownPaymentWithBuyerResponse {
+  downPayment: IDownPaymentResponse;
+  buyer: IBuyer;
 }
 
 export interface IUnitResponsePrice {
