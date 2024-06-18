@@ -21,14 +21,15 @@ export class ProjectsService {
    * GET requests
    *==================
    */
-  async getProjects(searchTerm: string) {
+  async getProjects(): Promise<IProject[]> {
     try {
       const { data } = await axios.get(
-        this.projects_endpoint + "search=" + searchTerm
+        this.projects_endpoint,
       );
       return data;
     } catch (error) {
       console.error(`[ProjectsService][getProjects]: ${error}`);
+      throw error;
     }
   }
 
