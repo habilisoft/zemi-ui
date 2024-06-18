@@ -10,6 +10,8 @@ import { Samples } from '@/modules/construction/samples';
 import { Buyers, NewBuyer } from '@/modules/construction/buyers';
 import { DownPaymentInstallment } from '@/modules/construction/projects/down-payment-installment';
 import { BuyerDetails } from '@/modules/construction/buyers/buyer-details.tsx';
+import { InitDownPaymentInstallment } from '@/modules/construction/payments/init-down-payment-installment.tsx';
+import { PaymentReceipt } from '@/modules/construction/payments/payment-receipt';
 
 const menuItems = [
   {
@@ -23,6 +25,16 @@ const menuItems = [
   {
     title: "Clientes",
     path: "/construction/buyers",
+  },
+  {
+    title: "Pagos",
+    path: "/construction/payments",
+    children: [
+      {
+        title: "Cuotas de Inicial",
+        path: "/construction/payments/down-payment-installment",
+      }
+    ]
   }
 ];
 
@@ -77,6 +89,14 @@ export const constructionRoutes = {
     {
       path: "projects/:projectId/units/:unitId/down-payment-installment",
       element: <DownPaymentInstallment />,
+    },
+    {
+      path: "payments/down-payment-installment",
+      element: <InitDownPaymentInstallment />,
+    },
+    {
+      path: "payments/receipt",
+      element: <PaymentReceipt />,
     }
   ],
 };

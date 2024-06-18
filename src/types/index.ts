@@ -238,3 +238,9 @@ export interface ICompanyInformation {
   logo?: string,
   document?: string
 }
+
+export interface MenuItem {
+  title: string;
+  path: string;
+  children?: MenuItem[];
+}
