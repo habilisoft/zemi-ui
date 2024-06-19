@@ -1,7 +1,7 @@
 import axios from "axios";
 import {
   DownPaymentInstallmentRequest,
-  IProject,
+  IProject, IProjectRequest,
   IProjectUnitRequest,
   IReserveUnitData,
   IUnitDetailResponse,
@@ -68,7 +68,7 @@ export class ProjectsService {
     * POST requests
     * ==================
    */
-  async createProject(project: IProject) {
+  async createProject(project: IProjectRequest) {
     try {
       const { data } = await axios.post(this.projects_endpoint, project);
       return data;
