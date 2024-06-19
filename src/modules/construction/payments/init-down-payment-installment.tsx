@@ -2,15 +2,15 @@ import { Breadcrumb } from '@/components/ui/breadcrumb';
 import PageTitle from '@/components/ui/page-title';
 import { RemoteComboBox } from '@/components/ui/remote-combobox';
 import { useState } from 'react';
-import { IProjectResponse, IProjectUnitResponse } from '@/types';
+import { IProject, IProjectUnit } from '@/types';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import { useNavigate } from 'react-router-dom';
 
 export function InitDownPaymentInstallment() {
-  const [selectedProject, setSelectedProject] = useState<IProjectResponse>();
-  const [selectedUnit, setSelectedUnit] = useState<IProjectUnitResponse>();
+  const [selectedProject, setSelectedProject] = useState<IProject>();
+  const [selectedUnit, setSelectedUnit] = useState<IProjectUnit | undefined>();
   const navigate = useNavigate();
 
   const handleSelect = (data: Record<string, never>) => {
@@ -21,7 +21,7 @@ export function InitDownPaymentInstallment() {
       value: data.value,
       downPaymentInformation: data.downPaymentInformation,
       pricePerUnit: data.pricePerUnit,
-    } as IProjectResponse;
+    } as IProject;
 
     setSelectedProject(project);
   }
@@ -68,8 +68,8 @@ export function InitDownPaymentInstallment() {
               <SelectValue placeholder="Seleccione una unidad"/>
             </SelectTrigger>
             <SelectContent>
-              {selectedProject?.units?.map((option) => (
-                <SelectItem key={option.id} value={option.id.toString()}>
+              {selectedProject?.units?.map((option, index) => (
+                <SelectItem key={index} value={option.id.toString()}>
                   {option.name}
                 </SelectItem>
               ))}

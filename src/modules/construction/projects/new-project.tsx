@@ -3,7 +3,7 @@ import { z } from "zod";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { ProjectsService } from '@/services/projects.service.ts';
 import { useState } from 'react';
-import { IDownPaymentInformation, IProject, Money } from '@/types';
+import { IDownPaymentInformation, IProject, IProjectRequest, Money } from '@/types';
 import { useNavigate } from 'react-router-dom';
 import { Messages } from '@/lib/constants.tsx';
 import ClosableAlert from '@/components/ui/closable-alert.tsx';
@@ -16,7 +16,7 @@ export function NewProject() {
 
   const handleSubmit = (data: Record<string, string | string [] | Money>) => {
     setLoading(true);
-    const projectData: IProject = getProjectData(data);
+    const projectData: IProjectRequest = getProjectData(data);
     const unitsToAdd = parseInt(data.qty as string);
     projectsService.createProject(projectData)
       .then((data: IProject) => {
