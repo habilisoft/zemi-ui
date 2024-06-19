@@ -109,7 +109,7 @@ export interface LoginRequest {
 export interface IProject {
   id?: number;
   name: string;
-  value: Money;
+  value?: Money;
   downPaymentInformation: IDownPaymentInformation;
   pricePerUnit?: IPricePerUnit;
   units?: IProjectUnit[];
@@ -148,9 +148,10 @@ export interface IPercentageValue {
 
 export interface IDownPaymentPaymentMethod {
   monthsToComplete?: number;
-  type: "percentage" | "upfront";
+  type: "reservation" | "upfront";
   percentage?: number;
   reservationAmount?: Money;
+  amount?: Money;
 }
 
 export interface IProjectUnit {
@@ -293,7 +294,31 @@ export interface MenuItem {
 export interface IPaymentResponse {
   id: number;
   amount: Money
+  description: string
   paymentInformation: {
     paymentMethods: IPaymentMethod[]
   }
+}
+
+export interface IDownPaymentInstallmentResponse {
+  buyer: IBuyer;
+  installment: {
+    id: number;
+    date: string;
+    createdById: string;
+    balance: Money;
+    payment: IPaymentResponse;
+  }
+}
+
+export interface IExchangeRateResponse {
+  source: {
+    name: string,
+    displayName: string
+  },
+  buy: number,
+  sell: number,
+  from: string,
+  to: string,
+  lastUpdate: string
 }

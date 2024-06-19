@@ -399,7 +399,7 @@ export function CompoundForm(props: Props) {
                   ? form.watch(condition.field).includes(condition.value?.toString())
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                   // @ts-expect-error
-                  : form.watch(condition.field).toString() === condition.value?.toString();
+                  : form.watch(condition.field)?.toString() === condition.value?.toString();
                 if (!show) {
                   form.setValue(inputData.name as never, inputData.defaultValue as never);
                 }

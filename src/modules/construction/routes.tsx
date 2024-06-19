@@ -12,6 +12,7 @@ import { DownPaymentInstallment } from '@/modules/construction/projects/down-pay
 import { BuyerDetails } from '@/modules/construction/buyers/buyer-details.tsx';
 import { InitDownPaymentInstallment } from '@/modules/construction/payments/init-down-payment-installment.tsx';
 import { PaymentReceipt } from '@/modules/construction/payments/payment-receipt';
+import ListDownPaymentInstallments from '@/modules/construction/payments/list-down-payment-installments.tsx';
 
 const menuItems = [
   {
@@ -31,8 +32,12 @@ const menuItems = [
     path: "/construction/payments",
     children: [
       {
-        title: "Cuotas de Inicial",
+        title: "Abono a inicial",
         path: "/construction/payments/down-payment-installment",
+      },
+      {
+        title: "Recibos de pago",
+        path: "/construction/payments/receipts",
       }
     ]
   }
@@ -95,8 +100,12 @@ export const constructionRoutes = {
       element: <InitDownPaymentInstallment />,
     },
     {
-      path: "payments/receipt",
+      path: "payments/receipts/:installmentId",
       element: <PaymentReceipt />,
+    },
+    {
+      path: "payments/receipts",
+      element: <ListDownPaymentInstallments/>,
     }
   ],
 };

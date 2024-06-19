@@ -50,7 +50,7 @@ function Icon({ color }: { color: Color }): JSX.Element {
 
 const ClosableAlert: React.FC<Type> = ({
                                  children,
-                                 closable =true,
+                                 closable =false,
                                   autoClose,
                                  color,
                                  hide,
