@@ -34,35 +34,36 @@ export function NewProject() {
   const getProjectData = (data: Record<string, string | string [] | Money>) => {
     const projectData = {
       name: data.name as string,
-      value: data.unitPrice as Money,
+      pricePerUnit: data.unitPrice as Money,
       downPaymentInformation: {} as IDownPaymentInformation
     }
 
     switch (data.downPaymentAmountType) {
       case "percentage":
-        projectData.downPaymentInformation.downPaymentAmount = {
+        projectData.downPaymentInformation.amount = {
           type: "percentage",
           percentage: parseFloat(data.downPaymentAmountPercentage as string),
         }
         break;
       case "amount":
-        projectData.downPaymentInformation.downPaymentAmount = {
+        projectData.downPaymentInformation.amount = {
           type: "amount",
           amount: data.downPaymentAmountValue as Money,
         }
         break;
     }
-
+    //temp
+    data.downPaymentPaymentMethod = "reservation";
     switch (data.downPaymentPaymentMethod) {
-      case "percentage":
-        projectData.downPaymentInformation.downPaymentPaymentMethod = {
-          type: "percentage",
-          reservationAmount: data.reservationAmount as Money,
+      case "reservation":
+        projectData.downPaymentInformation.paymentMethod = {
+          type: "reservation",
+          amount: data.reservationAmount as Money,
           monthsToComplete: parseInt(data.monthsToComplete as string),
         }
         break;
       case "upfront":
-        projectData.downPaymentInformation.downPaymentPaymentMethod = {
+        projectData.downPaymentInformation.paymentMethod = {
           type: "upfront"
         };
     }
@@ -150,11 +151,11 @@ export function NewProject() {
               type: "radioGroup",
               label: "Pago de Inicial",
               options: [
-                { label: "Separación", value: "percentage" },
+                { label: "Separación", value: "reservation" },
                 { label: "Pago por adelantado", value: "upfront" },
               ],
               name: "downPaymentPaymentMethod",
-              defaultValue: "percentage",
+              defaultValue: "reservation",
               validations: z.string(),
             },
             {
@@ -162,7 +163,7 @@ export function NewProject() {
               label: "Monto Separación",
               helpText: "Monto a pagar para separar la unidad.",
               name: "reservationAmount",
-              showIf: [{ field: "downPaymentPaymentMethod", value: "percentage" }],
+              showIf: [{ field: "downPaymentPaymentMethod", value: "reservation" }],
               defaultValue: { value: 1, currency: "USD" },
               validations: z.object({
                 currency: z.string(),
@@ -172,7 +173,7 @@ export function NewProject() {
             {
               type: "number",
               label: "Meses para completar el inicial",
-              showIf: [{ field: "downPaymentPaymentMethod", value: "percentage" }],
+              showIf: [{ field: "downPaymentPaymentMethod", value: "reservation" }],
               name: "monthsToComplete",
               defaultValue: 1,
               validations: z.coerce

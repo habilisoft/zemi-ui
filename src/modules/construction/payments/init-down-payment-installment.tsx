@@ -1,7 +1,7 @@
 import { Breadcrumb } from '@/components/ui/breadcrumb';
 import PageTitle from '@/components/ui/page-title';
 import { RemoteComboBox } from '@/components/ui/remote-combobox';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { IProjectResponse, IProjectUnitResponse } from '@/types';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label.tsx';
@@ -27,26 +27,20 @@ export function InitDownPaymentInstallment() {
   }
 
   const handleSelectUnit = (data: string) => {
-    console.log("data", data)
     const unit = selectedProject?.units?.find((unit) => unit.id.toString() === data);
-    console.log("unit", unit)
     setSelectedUnit(unit);
   }
-
-  useEffect(() => {
-    console.log("selectedUnit", selectedUnit)
-  }, [selectedUnit]);
 
   return (
     <div className="h-full flex-1 flex-col space-y-4">
       <Breadcrumb
         items={[
           { label: "Pagos", path: "" },
-          { label: "Cuota de inicial", path: "/company-settings" },
+          { label: "Abono a inicial", path: "" },
         ]}
       />
       <div className="flex items-center justify-between space-y-2">
-        <PageTitle title="Cuota de inicial" subtitle="Pagos"/>
+        <PageTitle title="Abono a inicial" subtitle="Pagos"/>
       </div>
 
       <div className="flex-col">

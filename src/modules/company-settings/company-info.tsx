@@ -59,6 +59,16 @@ export function CompanyInfo() {
               bg="gray">
               {companyInfo?.document}
             </FactRow>
+            <FactRow
+              title="Correo Electrónico"
+              bg="white">
+              {companyInfo?.email}
+            </FactRow>
+            <FactRow
+              title="Sitio Web"
+              bg="gray">
+              {companyInfo?.website}
+            </FactRow>
           </dl>
         </div>
 

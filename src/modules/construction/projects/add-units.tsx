@@ -49,14 +49,12 @@ export function AddUnits() {
     try {
       const validateData = FormSchema.parse(formData);
       setFormErrors([]);
-      console.log(project?.pricePerUnit?.downPaymentInformation);
       const units = validateData
         .map(({ name, value }) => (
           {
             name,
             value,
             downPaymentInformation: getDownPaymentInformation(project?.pricePerUnit?.downPaymentInformation)
-
           } as IProjectUnitRequest));
       projectsService.addUnits(units)
         .then(() => {

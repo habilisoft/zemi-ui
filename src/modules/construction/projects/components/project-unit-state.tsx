@@ -14,6 +14,10 @@ export function ProjectUnitState({ state }: { state: string }) {
       stateString = 'Vendido';
       color = 'red';
       break;
+    case 'UNAVAILABLE':
+      stateString = 'Deshabilitado';
+      color = 'gray';
+      break;
     default:
       stateString = 'Desconocido';
       color = 'gray';

@@ -109,7 +109,7 @@ export interface LoginRequest {
 export interface IProject {
   id?: number;
   name: string;
-  value: Money;
+  value?: Money;
   downPaymentInformation: IDownPaymentInformation;
   pricePerUnit?: IPricePerUnit;
   units?: IProjectUnit[];
@@ -148,9 +148,10 @@ export interface IPercentageValue {
 
 export interface IDownPaymentPaymentMethod {
   monthsToComplete?: number;
-  type: "percentage" | "upfront";
+  type: "reservation" | "upfront";
   percentage?: number;
   reservationAmount?: Money;
+  amount?: Money;
 }
 
 export interface IProjectUnit {
@@ -232,8 +233,18 @@ export interface IUnitResponse {
   id: number;
   name: string;
   state: "AVAILABLE" | "RESERVED" | "SOLD";
-  price: IUnitResponsePrice;
+  price?: IUnitResponsePrice;
   auditInfo: IAuditInfo;
+}
+export interface IUnitDetailResponse {
+  unit: IUnitResponse;
+  priceFromProject?: IUnitResponsePrice;
+  auditInfo: IAuditInfo;
+  downPayment?: IDownPaymentWithBuyerResponse;
+}
+export interface IDownPaymentWithBuyerResponse {
+  downPayment: IDownPaymentResponse;
+  buyer: IBuyer;
 }
 
 export interface IUnitResponsePrice {
@@ -250,11 +261,18 @@ export interface IAuditInfo {
 
 export interface IDownPaymentResponse {
   installments: DownPaymentInstallment[];
+  reservation?: IUnitReservation;
   state: "PENDING" | "PAID" | "CANCELLED";
   date: string;
   dueDate: string;
   amount: Money;
   balance: Money;
+}
+
+export interface IUnitReservation {
+  date: string;
+  amount: Money;
+  monthsToComplete: number;
 }
 
 export interface ICompanyInformation {
@@ -274,8 +292,33 @@ export interface MenuItem {
 }
 
 export interface IPaymentResponse {
+  id: number;
   amount: Money
+  description: string
   paymentInformation: {
     paymentMethods: IPaymentMethod[]
   }
+}
+
+export interface IDownPaymentInstallmentResponse {
+  buyer: IBuyer;
+  installment: {
+    id: number;
+    date: string;
+    createdById: string;
+    balance: Money;
+    payment: IPaymentResponse;
+  }
+}
+
+export interface IExchangeRateResponse {
+  source: {
+    name: string,
+    displayName: string
+  },
+  buy: number,
+  sell: number,
+  from: string,
+  to: string,
+  lastUpdate: string
 }

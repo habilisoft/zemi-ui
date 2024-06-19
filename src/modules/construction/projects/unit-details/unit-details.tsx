@@ -3,7 +3,13 @@ import { useEffect, useState } from 'react';
 import { Breadcrumb } from '@/components/ui/breadcrumb';
 import PageTitle from '@/components/ui/page-title';
 import { ProjectsService } from '@/services/projects.service.ts';
-import { IBuyer, IDownPaymentResponse, IProject, IUnitResponse } from '@/types';
+import {
+    IBuyer,
+    IDownPaymentResponse,
+    IProject,
+    IUnitDetailResponse,
+    IUnitResponse
+} from '@/types';
 import { Button } from '@/components/ui/button';
 import { ProjectUnitState } from '@/modules/construction/projects/components/project-unit-state';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -14,12 +20,12 @@ import ReservationAndDownPayment from '@/modules/construction/projects/unit-deta
 
 export function UnitDetails() {
   const [unit, setUnit] = useState<IUnitResponse>({} as IUnitResponse);
+  const [unitDetail, setUnitDetail] = useState<IUnitDetailResponse>({} as IUnitDetailResponse);
   const [project, setProject] = useState<IProject>({} as IProject);
   const { projectId, unitId } = useParams();
   const projectService = new ProjectsService(projectId);
   const [searchParams, setSearchParams] = useSearchParams();
   const [selectedTab, setSelectedTab] = useState(searchParams.get("tab") || "details");
-  const [downPaymentInstallments, setDownPaymentInstallments] = useState([]);
   const [, setLoadingProject] = useState(true);
   const [loadingUnit, setLoadingUnit] = useState(true);
   const [buyer, setBuyer] = useState<IBuyer>({} as IBuyer);
@@ -31,26 +37,17 @@ export function UnitDetails() {
       setProject(projectResponse);
       setLoadingProject(false);
       const unitResponse = await projectService.getUnit(unitId);
-      setUnit(unitResponse);
+      if (unitResponse.unit.state != 'AVAILABLE' && unitResponse.downPayment) {
+        const downPayment = unitResponse.downPayment.downPayment;
+        setDownPayment(downPayment);
+        unitResponse.downPayment.buyer && setBuyer(unitResponse.downPayment.buyer);
+      }
+      setUnitDetail(unitResponse);
+      setUnit(unitResponse.unit)
       setLoadingUnit(false);
     }
       fetchData();
   }, []);
-
-  useEffect(() => {
-    if (unit.state === 'RESERVED') {
-      projectService.getUnitDownPaymentDetails(unit.name)
-        .then((data) => {
-          setDownPaymentInstallments(data.downPayment.installments);
-          setDownPayment(data.downPayment);
-          setBuyer(data.buyer);
-        })
-        .catch(({ response }) => {
-          console.error(response?.data?.message);
-        });
-    }
-
-  }, [unit]);
 
   useEffect(() => {
     if (selectedTab) {
@@ -93,18 +90,22 @@ export function UnitDetails() {
           <TabsList>
             <TabsTrigger value="details">Detalles</TabsTrigger>
             <TabsTrigger value="installments">Pagos</TabsTrigger>
+            <TabsTrigger value="documents">Documentos</TabsTrigger>
           </TabsList>
         </div>
         <TabsContent value="details">
           {loadingUnit && <Spinner/>}
           {!loadingUnit && <div className="gap-6">
-            <UnitGeneralInfo unit={unit}/>
+            <UnitGeneralInfo unit={unitDetail}/>
             <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700"/>
             {unit.state !== 'AVAILABLE' && <ReservationAndDownPayment downPayment={downPayment} buyer={buyer} unit={unit}/>}
           </div>}
         </TabsContent>
         <TabsContent value="installments">
-          <InstallmentsTable downPaymentInstallments={downPaymentInstallments}/>
+          <InstallmentsTable downPayment={downPayment}/>
+        </TabsContent>
+        <TabsContent value="documents">
+          <div>Documents</div>
         </TabsContent>
       </Tabs>
     </div>

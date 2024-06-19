@@ -4,7 +4,7 @@ import {
   IProject,
   IProjectUnitRequest,
   IReserveUnitData,
-  IUnitResponse
+  IUnitDetailResponse,
 } from '@/types';
 
 export class ProjectsService {
@@ -53,7 +53,7 @@ export class ProjectsService {
     }
   }
 
-  async getUnit(unitId: string | undefined): Promise<IUnitResponse> {
+  async getUnit(unitId: string | undefined): Promise<IUnitDetailResponse> {
     try {
       const { data } = await axios.get(this.projects_endpoint + "/" + this.projectId + "/units/" + unitId);
       return data;

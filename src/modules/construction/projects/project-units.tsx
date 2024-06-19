@@ -24,7 +24,7 @@ export function ProjectUnits( {project}: Props ) {
     {
       "header": "Valor",
       "field": "price",
-      "render": (price: IProjectUnitPrice) =>  Formats.currency(price.value)
+      "render": (price?: IProjectUnitPrice) =>  Formats.currency(price?.value)
     },
     {
       "header": "Estado",

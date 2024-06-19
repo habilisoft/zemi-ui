@@ -1,10 +1,10 @@
 import { FactRow } from '@/components/ui/fact-row.tsx';
-import { IUnitResponse } from '@/types';
+import { IUnitDetailResponse } from '@/types';
 import Formats from '@/lib/formatters';
 import { ProjectUnitState } from '@/modules/construction/projects/components/project-unit-state.tsx';
 
 type Props = {
-  unit: IUnitResponse;
+  unit: IUnitDetailResponse;
 }
 export default function UnitGeneralInfo(
   {
@@ -22,13 +22,13 @@ export default function UnitGeneralInfo(
             bg="gray"
             title="Valor">
             <span className="text-sm text-gray-900">
-              {Formats.currency(unit.price.value)}
+              {Formats.currency(unit.unit.price?.value || unit.priceFromProject?.value)}
             </span>
           </FactRow>
           <FactRow
             title="Estado"
             bg="white">
-            <ProjectUnitState state={unit.state} />
+            <ProjectUnitState state={unit.unit.state} />
           </FactRow>
         </dl>
       </div>
