@@ -20,7 +20,6 @@ export function UnitRowActions({
   unit,
   project
 }: Props) {
-  console.log(unit);
 
   return (
     <DropdownMenu>

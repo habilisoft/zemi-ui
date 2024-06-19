@@ -99,6 +99,20 @@ export function EditCompanyInfo() {
                 validations: z.string()
               },
               {
+                label: "Correo Electrónico",
+                name: "email",
+                type: "text",
+                defaultValue: companyInfo?.email || "",
+                validations: z.string().email("Correo inválido")
+              },
+              {
+                label: "Web",
+                name: "website",
+                type: "text",
+                defaultValue: companyInfo?.website || "",
+                validations: z.string()
+              },
+              {
                 label: "Logo",
                 name: "logo",
                 type: "text",

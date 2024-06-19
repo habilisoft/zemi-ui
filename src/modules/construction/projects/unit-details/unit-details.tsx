@@ -93,6 +93,7 @@ export function UnitDetails() {
           <TabsList>
             <TabsTrigger value="details">Detalles</TabsTrigger>
             <TabsTrigger value="installments">Pagos</TabsTrigger>
+            <TabsTrigger value="documents">Documentos</TabsTrigger>
           </TabsList>
         </div>
         <TabsContent value="details">
@@ -105,6 +106,9 @@ export function UnitDetails() {
         </TabsContent>
         <TabsContent value="installments">
           <InstallmentsTable downPaymentInstallments={downPaymentInstallments}/>
+        </TabsContent>
+        <TabsContent value="documents">
+          <div>Documents</div>
         </TabsContent>
       </Tabs>
     </div>

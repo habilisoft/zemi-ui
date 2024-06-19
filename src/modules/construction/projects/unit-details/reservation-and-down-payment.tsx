@@ -16,6 +16,8 @@ export default function ReservationAndDownPayment(
     downPayment
   }: Props
 ) {
+
+  console.log('downPayment', downPayment)
   return (
     <div>
       <div className="px-4 sm:px-0">
@@ -52,7 +54,7 @@ export default function ReservationAndDownPayment(
           </FactRow>
           <FactRow title="Fecha de Reserva" bg="gray">
             <span className="text-sm text-gray-900">
-              {Formats.dateWithNames(downPayment.date)}
+              {Formats.dateWithNames(downPayment.reservation.date)}
             </span>
           </FactRow>
           <FactRow title="Meses para completar el inicial" bg="white">

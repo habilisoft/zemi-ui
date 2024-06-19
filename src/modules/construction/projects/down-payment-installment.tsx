@@ -1,16 +1,25 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ProjectsService } from '@/services/projects.service.ts';
-import { DownPaymentInstallmentRequest, IBuyer, IProject, IUnitResponse, Money } from '@/types';
+import {
+  DownPaymentInstallmentRequest,
+  IBuyer,
+  IDownPaymentInstallmentResponse,
+  IProject,
+  IUnitDetailResponse,
+  Money
+} from '@/types';
 import { Breadcrumb } from '@/components/ui/breadcrumb.tsx';
 import { Messages } from '@/lib/constants.tsx';
 import { z } from 'zod';
 import { CompoundForm } from '@/components/ui/compound-form.tsx';
 import { toast } from 'sonner';
 import ClosableAlert from '@/components/ui/closable-alert.tsx';
+import PageTitle from '@/components/ui/page-title.tsx';
+import Formatters from '@/lib/formatters.ts';
 
 export function DownPaymentInstallment() {
-  const [unit, setUnit] = useState<IUnitResponse>({ } as IUnitResponse );
+  const [unitResponse, setUnitResponse] = useState<IUnitDetailResponse>({ } as IUnitDetailResponse );
   const { projectId, unitId } = useParams<{ projectId: string, unitId: string }>();
   const [project, setProject] = useState<IProject | undefined>({} as IProject);
   const projectService = new ProjectsService(projectId);
@@ -21,7 +30,7 @@ export function DownPaymentInstallment() {
   useEffect(() => {
     projectService.getUnit(unitId)
       .then((unitData) => {
-        setUnit(unitData);
+        setUnitResponse(unitData);
       })
       .catch(({ response }) => {
         setError(response?.data?.message || Messages.UNEXPECTED_ERROR);
@@ -42,10 +51,10 @@ export function DownPaymentInstallment() {
     const requestData = getRequestData(data);
 
     setLoading(true);
-    projectService.downPaymentInstallment(unit.name, requestData)
-      .then(() => {
+    projectService.downPaymentInstallment(unitResponse?.unit?.name, requestData)
+      .then((response: IDownPaymentInstallmentResponse) => {
         toast.success('Abono a inicial aplicado correctamente');
-        navigate(`/construction/projects/${projectId}/units/${unit.id}`)
+        navigate(`/construction/payments/receipts/${response.installment.id}`);
       })
       .catch(({response}) => {
         setError(response?.data?.message || Messages.UNEXPECTED_ERROR);
@@ -79,17 +88,25 @@ export function DownPaymentInstallment() {
           { label: "Proyectos", path: "/construction/projects" },
           { label: project?.name || "", path: `/construction/projects/${project?.id}/details` },
           { label: "Unidades" || "", path: `/construction/projects/${project?.id}/details?tab=units` },
-          { label: unit?.name || "", path: `/construction/projects/${project?.id}/units/${unit?.id}` },
+          { label: unitResponse?.unit?.name || "", path: `/construction/projects/${project?.id}/units/${unitResponse?.unit?.id}` },
           { label: "Abono a inicial", path: "" }
         ]}
       />
 
+      <PageTitle title="Abono a Inicial" subtitle={unitResponse?.unit?.name}/>
+
       <div className="max-w-md mx-auto mt-8">
+        <div className="mb-4">
+          <ClosableAlert closable={false} color="info">
+            <p><strong>Monto Inicial: </strong> {Formatters.currency(unitResponse?.downPayment?.downPayment?.amount)}</p>
+            <p><strong>Balance:</strong> {Formatters.currency(unitResponse?.downPayment?.downPayment?.balance)}</p>
+          </ClosableAlert>
+        </div>
         {error && <ClosableAlert closable={false} color="danger">{error}</ClosableAlert>}
         <CompoundForm
           sendingRequest={loading}
           onSubmit={downPaymentInstallment}
-          title="Abono a Inicial"
+          title="Detalles de Pago"
           submitButtonText="Aplicar Abono"
           onCancel={() => navigate(-1)}
           alertDialogText="Confirmar"

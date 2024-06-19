@@ -16,8 +16,8 @@ export function NewBuyer() {
       <Breadcrumb
         items={[
           { label: "Constructora", path: "/construction" },
-          { label: "Proyectos", path: "/construction/projects" },
-          { label: "Nuevo Proyecto", path: "/construction/projects/new" },
+          { label: "Clientes", path: "/construction/buyers" },
+          { label: "Nuevo Cliente", path: "/construction/buyers/new" },
         ]}
       />
       <div className="max-w-md mx-auto mt-8">

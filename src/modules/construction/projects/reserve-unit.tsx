@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ProjectsService } from '@/services/projects.service.ts';
-import { IBuyer, IProject, IReserveUnitData, IUnitResponse, Money } from '@/types';
+import { IBuyer, IProject, IReserveUnitData, IUnitDetailResponse, Money } from '@/types';
 import { Breadcrumb } from '@/components/ui/breadcrumb.tsx';
 import { Messages } from '@/lib/constants.tsx';
 import { CreateBuyerModal } from '@/modules/construction/buyers/create-buyer-modal.tsx';
@@ -11,7 +11,7 @@ import { toast } from 'sonner';
 import ClosableAlert from '@/components/ui/closable-alert.tsx';
 
 export function ReserveUnit() {
-  const [unit, setUnit] = useState<IUnitResponse>({} as IUnitResponse);
+  const [unitResponse, setUnitResponse] = useState<IUnitDetailResponse>({} as IUnitDetailResponse);
   const { projectId, unitId } = useParams<{ projectId: string, unitId: string }>();
   const [project, setProject] = useState<IProject | undefined>({} as IProject);
   const projectService = new ProjectsService(projectId);
@@ -22,7 +22,7 @@ export function ReserveUnit() {
   useEffect(() => {
     projectService.getUnit(unitId)
       .then((unitData) => {
-        setUnit(unitData);
+        setUnitResponse(unitData);
       })
       .catch(({ response }) => {
         setError(response?.data?.message || Messages.UNEXPECTED_ERROR);
@@ -42,10 +42,10 @@ export function ReserveUnit() {
   const reserverUnit = (data: Record<string, string | string[] | object | number>) => {
     const requestData = getRequestData(data);
     setLoading(true);
-    projectService.reserveUnit(unit.name, requestData)
-      .then(() => {
+    projectService.reserveUnit(unitResponse.unit.name, requestData)
+      .then((response ) => {
         toast.success('Unidad reservada correctamente');
-        navigate(`/construction/projects/${projectId}/details?tab=units`)
+        navigate(`/construction/payments/receipts/${response.installments[0].id}`);
       })
       .catch(({ response }) => {
         setError(response?.data?.message || Messages.UNEXPECTED_ERROR);
@@ -80,7 +80,7 @@ export function ReserveUnit() {
           { label: "Proyectos", path: "/construction/projects" },
           { label: project?.name || "", path: `/construction/projects/${project?.id}/details` },
           { label: "Unidades" || "", path: `/construction/projects/${project?.id}/details?tab=units` },
-          { label: unit?.name || "", path: `/construction/projects/${project?.id}/units/${unit?.id}` },
+          { label: unitResponse?.unit?.name || "", path: `/construction/projects/${project?.id}/units/${unitResponse?.unit?.id}` },
           { label: "Reservar", path: "" }
         ]}
       />
@@ -108,7 +108,7 @@ export function ReserveUnit() {
                 displayProperty: "name",
                 valueProperty: "id",
               },
-              placeholder: "Seleccione un cliente",
+              placeholder: "Seleccione un comprador",
               validations: z.object({
                 id: z.number(),
                 name: z.string(),
@@ -130,7 +130,7 @@ export function ReserveUnit() {
               validations: z
                 .array(z.string())
                 .refine((value) => value.some((item) => item), {
-                  message: "You have to select at least one option.",
+                  message: "Debe seleccionar al menos una forma de pago",
                 }),
             },
             {

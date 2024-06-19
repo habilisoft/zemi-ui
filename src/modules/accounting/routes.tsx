@@ -1,6 +1,12 @@
-import { ModuleNotImplemented } from '@/components/module-not-implemented';
+import { BaseLayout } from '@/layouts';
+
+const menuItems = [
+  {
+    title: "Dashboard",
+    path: "/accounting",
+  }]
 
 export const accountingRoutes = {
   path: "accounting",
-  element: <ModuleNotImplemented/>
+  element: <BaseLayout title="Contabilidad" menuItems={menuItems} />,
 };
