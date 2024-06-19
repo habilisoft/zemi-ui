@@ -261,19 +261,18 @@ export interface IAuditInfo {
 
 export interface IDownPaymentResponse {
   installments: DownPaymentInstallment[];
+  reservation?: IUnitReservation;
   state: "PENDING" | "PAID" | "CANCELLED";
   date: string;
   dueDate: string;
   amount: Money;
   balance: Money;
-  reservation: IReservationResponse
 }
 
-export interface IReservationResponse {
-  amount: Money;
+export interface IUnitReservation {
   date: string;
+  amount: Money;
   monthsToComplete: number;
-  payment: IPaymentResponse
 }
 
 export interface ICompanyInformation {
@@ -293,6 +292,7 @@ export interface MenuItem {
 }
 
 export interface IPaymentResponse {
+  id: number;
   amount: Money
   description: string
   paymentInformation: {
