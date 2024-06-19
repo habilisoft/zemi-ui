@@ -115,13 +115,13 @@ export interface IProject {
   units?: IProjectUnit[];
 }
 
-export interface IProjectResponse {
+export interface IProjectRequest {
   id?: number;
   name: string;
-  value: Money;
+  value?: Money;
   downPaymentInformation: IDownPaymentInformation;
-  pricePerUnit?: IPricePerUnit;
-  units?: IProjectUnitResponse[];
+  pricePerUnit: Money;
+  units?: IProjectUnit[];
 }
 
 export interface IPricePerUnit {
@@ -156,15 +156,6 @@ export interface IDownPaymentPaymentMethod {
 
 export interface IProjectUnit {
   id: IProjectUnitId;
-  name: string;
-  project: IProject;
-  state: "AVAILABLE" | "RESERVED" | "SOLD";
-  value: number;
-  currency: string;
-}
-
-export interface IProjectUnitResponse {
-  id: number;
   name: string;
   project: IProject;
   state: "AVAILABLE" | "RESERVED" | "SOLD";

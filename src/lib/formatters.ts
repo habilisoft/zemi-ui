@@ -17,9 +17,9 @@ function receiptNumber(value: number) {
   return value.toString().padStart(8, '0');
 }
 
-function dateWithNames(value: string) {
+function dateWithNames(value: string | undefined) {
+  if (!value) return 'N/D';
   const date = new Date(value);
-  //format should be "Septiembre 15, 2021". The month should Capitalized
   return date.toLocaleDateString('es-DO', {
     month: 'long',
     day: 'numeric',
