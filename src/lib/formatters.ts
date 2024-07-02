@@ -1,11 +1,13 @@
 import { Money } from '@/types';
 
-function currency(value: Money | undefined) {
-  if (!value) return 'N/D';
+function currency(money: Money | undefined) {
+  if (!money) return 'N/D';
+  const { value, currency } = money;
+  if (value == undefined) return 'N/D';
   return new Intl.NumberFormat('es-DO', {
     style: 'currency',
-    currency: value.currency
-  }).format(value.value)
+    currency
+  }).format(value)
 }
 
 function dateTime(value: string) {

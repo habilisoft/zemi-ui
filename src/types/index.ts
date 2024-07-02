@@ -219,23 +219,13 @@ export interface IChangePasswordRequest {
   currentPassword: string;
   newPassword: string;
 }
-
-export interface IUnitResponse {
+export interface IUnitDetailResponse {
   id: number;
   name: string;
   state: "AVAILABLE" | "RESERVED" | "SOLD";
+  project: IProject;
   price?: IUnitResponsePrice;
-  auditInfo: IAuditInfo;
-}
-export interface IUnitDetailResponse {
-  unit: IUnitResponse;
-  priceFromProject?: IUnitResponsePrice;
-  auditInfo: IAuditInfo;
-  downPayment?: IDownPaymentWithBuyerResponse;
-}
-export interface IDownPaymentWithBuyerResponse {
-  downPayment: IDownPaymentResponse;
-  buyer: IBuyer;
+  downPayment?: IDownPaymentResponse;
 }
 
 export interface IUnitResponsePrice {
@@ -243,14 +233,8 @@ export interface IUnitResponsePrice {
   downPaymentInformation: IDownPaymentInformation;
 }
 
-export interface IAuditInfo {
-  createdAt: string;
-  createdBy: string;
-  updatedAt: string;
-  updatedBy: string;
-}
-
 export interface IDownPaymentResponse {
+  buyer: IBuyer;
   installments: DownPaymentInstallment[];
   reservation?: IUnitReservation;
   state: "PENDING" | "PAID" | "CANCELLED";
@@ -293,13 +277,19 @@ export interface IPaymentResponse {
 
 export interface IDownPaymentInstallmentResponse {
   buyer: IBuyer;
-  installment: {
-    id: number;
-    date: string;
-    createdById: string;
-    balance: Money;
-    payment: IPaymentResponse;
-  }
+  id: number;
+  date: string;
+  createdById: string;
+  balance: Money;
+  payment: IPaymentResponse;
+}
+export interface IDownPaymentInstallmentDetailedResponse {
+  id: number;
+  date: string;
+  createdById: string;
+  balance: Money;
+  downPayment: IDownPaymentResponse;
+  payment: IPaymentResponse;
 }
 
 export interface IExchangeRateResponse {
