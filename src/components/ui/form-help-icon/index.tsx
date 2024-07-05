@@ -21,7 +21,6 @@ export function FormHelpIcon(
               <IoInformationCircleOutline
                 className="cursor-pointer font-bold hover:text-gray-700 text-gray-500 text-lg"/>
             </div>
-
           </Tooltip.Trigger>
           <Tooltip.Portal>
             <Tooltip.Content className="TooltipContent" sideOffset={5}>

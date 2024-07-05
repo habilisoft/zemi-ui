@@ -49,13 +49,12 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   };
 
-
   const getUser = async () : Promise<IUser> => {
     try {
       const getCurrentUser = axios.get("/api/v1/users/me");
       const { data } = await getCurrentUser;
       setAuthUser(data);
-      setIsAuth(!data.changePasswordAtNextLogon);
+      setIsAuth(!data.changePasswordAtNextLogin);
       return data;
     } catch (error) {
       await axios.get("/api/v1/logout");
@@ -63,7 +62,6 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       throw error;
     }
   };
-
 
   const logout = () => {
     axios.get("/api/v1/logout").finally(() => {

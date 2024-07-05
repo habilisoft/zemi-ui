@@ -1,13 +1,14 @@
-import RemoteDataTable from '@/components/ui/remote-data-table';
+import { RemoteDataTable } from '@/components/ui/remote-data-table';
 import { IBuyer, IDownPaymentInstallmentResponse } from '@/types';
 import { Link } from 'react-router-dom';
 import Formats from '@/lib/formatters.ts';
 import { Breadcrumb } from '@/components/ui/breadcrumb.tsx';
 import PageTitle from '@/components/ui/page-title.tsx';
+import { PageWrapper } from '@/components/ui/page-wrapper.tsx';
 
 function ListDownPaymentInstallments() {
   return (
-    <div className="h-full flex-1 flex-col space-y-4">
+    <PageWrapper>
       <Breadcrumb
         items={[
           { label: "Constructora", path: "/construction" },
@@ -61,7 +62,7 @@ function ListDownPaymentInstallments() {
           },
         ]}
         style={{}}/>
-    </div>
+    </PageWrapper>
   )
 }
 

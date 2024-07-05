@@ -20,6 +20,7 @@ import ClosableAlert from '@/components/ui/closable-alert.tsx';
 import { toast } from 'sonner';
 import { ConfirmCancelButton } from '@/components/ui/confirm-cancel-button.tsx';
 import { MoneyValidationSchema } from '@/lib/validations.ts';
+import { PageWrapper } from '@/components/ui/page-wrapper.tsx';
 
 const ElementSchema = z.object({
   name: z.string().min(1, { message: 'El nombre de la unidad es requerido' }),
@@ -127,7 +128,7 @@ export function AddUnits() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="h-full flex-1 flex-col space-y-4">
+      <PageWrapper>
         <Breadcrumb
           items={[
             { label: "Constructora", path: "/construction" },
@@ -222,7 +223,7 @@ export function AddUnits() {
             </tbody>
           </table>
         </div>
-      </div>
+      </PageWrapper>
     </form>
   )
 }

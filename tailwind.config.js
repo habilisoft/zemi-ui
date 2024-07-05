@@ -1,6 +1,7 @@
 const defaultTheme = require("tailwindcss/defaultTheme");
 
 module.exports = {
+  safelist: ['bg-blue-50', 'bg-green-50'],
   darkMode: ["class"],
   content: [
     "./pages/**/*.{ts,tsx}",

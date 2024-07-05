@@ -9,7 +9,8 @@ import { ChevronDown } from "lucide-react";
 import { useCompoundStore } from '@/stores/compound-store.ts';
 import { shallow } from 'zustand/shallow';
 import { Link } from 'react-router-dom';
-import { GrUserSettings } from 'react-icons/gr';
+import { BsBuildingGear } from 'react-icons/bs';
+import { FaUsersGear } from 'react-icons/fa6';
 
 export const TenantsDropdown = () => {
   const {
@@ -38,8 +39,16 @@ export const TenantsDropdown = () => {
           asChild
           className="cursor-pointer gap-2 py-2">
           <Link to={`/company-settings`}>
-            <GrUserSettings size={18}/>
+            <BsBuildingGear size={18}/>
             Ajustes de empresa
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          asChild
+          className="cursor-pointer gap-2 py-2">
+          <Link to={`/access-control`}>
+            <FaUsersGear size={18}/>
+            Usuarios y permisos
           </Link>
         </DropdownMenuItem>
       </DropdownMenuContent>

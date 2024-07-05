@@ -2,9 +2,10 @@ import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { Link } from "react-router-dom";
-import RemoteDataTable, { Column } from '@/components/ui/remote-data-table';
+import { Column, RemoteDataTable } from '@/components/ui/remote-data-table';
 import { IProject } from '@/types';
 import PageTitle from '@/components/ui/page-title.tsx';
+import { PageWrapper } from '@/components/ui/page-wrapper.tsx';
 
 export function Buyers() {
 
@@ -18,7 +19,7 @@ export function Buyers() {
   ]
 
   return (
-    <div className="h-full flex-1 flex-col space-y-4">
+    <PageWrapper>
       <Breadcrumb
         items={[
           { label: "Constructora", path: "/construction" },
@@ -43,6 +44,6 @@ export function Buyers() {
         style={{ height: "calc(100vh - 350px)" }}
         searchFields={["name"]}
         defaultPageSize={25}/>
-    </div>
+    </PageWrapper>
   );
 }

@@ -5,6 +5,7 @@ import { FactRow } from '@/components/ui/fact-row.tsx';
 import PageTitle from '@/components/ui/page-title.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import { Link } from 'react-router-dom';
+import { PageWrapper } from '@/components/ui/page-wrapper.tsx';
 
 export function CompanyInfo() {
   const {
@@ -16,7 +17,7 @@ export function CompanyInfo() {
     shallow
   );
   return (
-    <div className="h-full flex-1 flex-col space-y-4">
+    <PageWrapper>
       <Breadcrumb
         items={[
           { label: "Empresa", path: "/company-settings" },
@@ -73,6 +74,6 @@ export function CompanyInfo() {
         </div>
 
       </div>
-    </div>
+    </PageWrapper>
   );
 }

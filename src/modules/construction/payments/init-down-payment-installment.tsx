@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Label } from '@/components/ui/label.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import { useNavigate } from 'react-router-dom';
+import { PageWrapper } from '@/components/ui/page-wrapper.tsx';
 
 export function InitDownPaymentInstallment() {
   const [selectedProject, setSelectedProject] = useState<IProject>();
@@ -32,7 +33,7 @@ export function InitDownPaymentInstallment() {
   }
 
   return (
-    <div className="h-full flex-1 flex-col space-y-4">
+    <PageWrapper>
       <Breadcrumb
         items={[
           { label: "Pagos", path: "" },
@@ -85,6 +86,6 @@ export function InitDownPaymentInstallment() {
        Continuar
       </Button>
 
-    </div>
+    </PageWrapper>
   );
 }

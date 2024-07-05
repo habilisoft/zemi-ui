@@ -9,6 +9,7 @@ import { z } from 'zod';
 import { CompoundForm } from '@/components/ui/compound-form.tsx';
 import { toast } from 'sonner';
 import ClosableAlert from '@/components/ui/closable-alert.tsx';
+import { PageWrapper } from '@/components/ui/page-wrapper.tsx';
 
 export function ReserveUnit() {
   const [unitResponse, setUnitResponse] = useState<IUnitDetailResponse>({} as IUnitDetailResponse);
@@ -73,7 +74,7 @@ export function ReserveUnit() {
   }
 
   return (
-    <div className="h-full flex-1 flex-col space-y-4">
+    <PageWrapper>
       <Breadcrumb
         items={[
           { label: "Constructora", path: "/construction" },
@@ -174,6 +175,6 @@ export function ReserveUnit() {
           ]}
         />
       </div>
-    </div>
+    </PageWrapper>
   );
 }

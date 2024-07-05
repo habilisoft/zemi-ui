@@ -68,6 +68,7 @@ interface Props extends IFormSchema {
   alertAcceptButtonText?: string;
   alertCancelButtonText?: string;
   externalErrors?: Record<string, string>;
+  buttonPosition?: "left" | "right";
   submitButtonVariant?:
     | "default"
     | "destructive"
@@ -96,6 +97,7 @@ export function CompoundForm(props: Props) {
     confirmCancel = true,
     alertAcceptButtonText,
     alertCancelButtonText,
+    buttonPosition = "left",
   } = props;
   const [alertDialogIsOpen, setAlertDialogIsOpen] = useState(false);
 
@@ -423,7 +425,7 @@ export function CompoundForm(props: Props) {
                 )}
               />
             ))}
-          <div className="flex items-center gap-4">
+          <div className={`flex items-center gap-4 ${buttonPosition == 'right' ? 'justify-end' : ''}`}>
             {onCancel && (
               <Button
                 onClick={() => {

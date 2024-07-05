@@ -6,4 +6,9 @@ const MoneyValidationSchema = z.object({
     .min(1, { message: 'Debe ser mayor que cero' })
 });
 
-export { MoneyValidationSchema }
+const passwordValidation = z
+    .string({ required_error: "Campo requerido" })
+    .min(6, { message: "Mínimo 6 caracteres" });
+
+
+export { MoneyValidationSchema, passwordValidation }

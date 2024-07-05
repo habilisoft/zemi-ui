@@ -87,7 +87,8 @@ export interface IInputFormSchema {
     | ZodOptional<ZodString>
     // eslint-disable-next-line
     | ZodObject<{}, "strip", ZodTypeAny, {}, {}>
-    | ZodDate;
+    | ZodDate
+    | ZodArray<ZodString>
 }
 
 export interface IFormSchema {
@@ -95,10 +96,43 @@ export interface IFormSchema {
 }
 
 export interface IUser {
-  id: number;
   name: string;
   username: string;
   profileImageUrl: string;
+  permissions: string[];
+  roles: IRole[],
+  changePasswordAtNextLogin: boolean;
+}
+
+export interface ICreateUserRequest {
+  name: string;
+  username: string;
+  password: string;
+  roles: string[];
+  changePasswordAtNextLogin: boolean;
+}
+
+export interface IUserCreated {
+  name: string,
+  username: string,
+  roles: IRole[],
+  password: string,
+  changePasswordAtNextLogin: boolean
+}
+
+export interface IRole {
+  id: string;
+  name: string;
+  description: string
+  permissions: string[];
+  systemRole: boolean;
+}
+
+export interface IPermission {
+  id: string,
+  name: string,
+  description: string
+  module: string
 }
 
 export interface LoginRequest {
@@ -219,6 +253,13 @@ export interface IChangePasswordRequest {
   currentPassword: string;
   newPassword: string;
 }
+
+export interface IResetPasswordRequest {
+  username: string;
+  password: string;
+  changePasswordAtNextLogin: boolean;
+}
+
 export interface IUnitDetailResponse {
   id: number;
   name: string;

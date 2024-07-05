@@ -1,4 +1,4 @@
-import SimpleDataTable from '@/components/ui/simple-data-table';
+import { SimpleDataTable } from '@/components/ui/simple-data-table';
 import { IDownPaymentResponse, IPaymentResponse, Money } from '@/types';
 import Formats from '@/lib/formatters.ts';
 import Sorting from '@/lib/sorting.ts';

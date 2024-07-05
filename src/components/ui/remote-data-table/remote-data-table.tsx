@@ -13,6 +13,8 @@ import LoadingIndicator from './LoadingIndicator';
 import { Messages } from '@/lib/constants';
 import ClosableAlert from '@/components/ui/closable-alert';
 import './styles.css';
+import { Checkbox } from '@/components/ui/checkbox.tsx';
+import cn from 'classnames';
 
 export type Column = {
   header?: string,
@@ -41,7 +43,10 @@ type Props = {
   updateData?(): void
   clearFilters?(): void,
   style: Record<string, string> | undefined,
-  defaultPageSize: number
+  defaultPageSize: number,
+  onSelect?(record: string): void,
+  selected?: string[],
+  idColumn?: string
 }
 
 type Pagination = {
@@ -61,14 +66,17 @@ const RemoteDataTable = ({
                            isSearchable = true,
                            useOr = true,
                            searchFields,
-                           filters = [],
+                           filters,
                            updateData,
                            defaultPageSize = 15,
                            path,
                            cardProps,
                            onRowClick,
                            style = {},
-                           placeholder = "Buscar"
+                           placeholder = "Buscar",
+                           onSelect,
+                           selected = [],
+                           idColumn = "id",
                          }: Props) => {
   const [pagination, setPagination] = useState<Pagination>({
     page: 0,
@@ -108,7 +116,7 @@ const RemoteDataTable = ({
     if (searchFields) {
       searchFields.forEach((field) => {
         if (searchTerm) {
-          query += `${field}${useOr ? `~` : ''}=${searchTerm}&`;
+          query += `${field}${useOr ? `~` : ''}=${encodeURIComponent(searchTerm)}&`;
         }
       });
     }
@@ -235,38 +243,52 @@ const RemoteDataTable = ({
         <table className="data-grid-table">
           <thead className="bg-gray-50 sticky top-0">
           <tr>
+            {onSelect && <th style={{ width: "40px" }}></th>}
             {columns && columns.map((column, index) => (<th style={column.style}
                                                             key={index}>{column.header}</th>))}
           </tr>
           </thead>
           <tbody>
-          {records && records.map((record, i) => (<tr key={i}
-                                                      style={{ cursor: typeof onRowClick === "function" ? "pointer" : "" }}
-                                                      className={`${i % 2 === 0 ? "bg-white" : "bg-gray-50"} hover:bg-gray-100`}
-                                                      onClick={() => {
-                                                        if (typeof onRowClick === "function") {
-                                                          onRowClick(record)
-                                                        }
-                                                      }}>
-            {columns && columns.map((column, j) => (<td key={j}
-                                                        onClick={(e) => {
-                                                          if (!column.onClick) {
-                                                            return
-                                                          }
-                                                          e.stopPropagation();
-                                                          column.onClick(record[column.field], record)
-                                                        }}
-                                                        style={column.style}>
-              {column.render ? column.render(record[column.field], record) : record[column.field]}
-            </td>))}
-          </tr>))}
+          {records && records.map((record, i) => {
+            const isSelected = selected?.includes(record[idColumn]);
+            return (<tr key={i}
+                        style={{ cursor: (typeof onRowClick === "function" || typeof onSelect === 'function') ? "pointer" : "" }}
+                        className={cn({"selected": isSelected})}
+                        onClick={() => {
+                          if (typeof onRowClick === "function") {
+                            onRowClick(record)
+                            return;
+                          }
+                          if(typeof onSelect === 'function') {
+                            onSelect(record[idColumn])
+                          }
+                        }}>
+              {onSelect && <th style={{ width: "40px" }}>
+                <Checkbox
+                  checked={isSelected}
+                  onCheckedChange={() => onSelect(record[idColumn])}
+                />
+              </th>}
+              {columns && columns.map((column, j) => (<td key={j}
+                                                          onClick={(e) => {
+                                                            if (!column.onClick) {
+                                                              return
+                                                            }
+                                                            e.stopPropagation();
+                                                            column.onClick(record[column.field], record)
+                                                          }}
+                                                          style={column.style}>
+                {column.render ? column.render(record[column.field], record) : record[column.field]}
+              </td>))}
+            </tr>)
+          })}
 
           {(!busy && !error && (!records || records.length < 1)) && <tr>
-            <td style={{ padding: 0 }} colSpan={columns.length}><ClosableAlert closable={false} color="warning">No se
+            <td style={{ padding: 0 }} colSpan={columns.length + (onSelect ? 1 : 0)}><ClosableAlert closable={false} color="warning">No se
               encontraron registros</ClosableAlert></td>
           </tr>}
           {(!busy && error) && <tr>
-            <td style={{ padding: 0 }} colSpan={columns.length}><ClosableAlert closable={false}
+            <td style={{ padding: 0 }} colSpan={columns.length + (onSelect ? 1 : 0) }><ClosableAlert closable={false}
                                                                                color="danger">{error}</ClosableAlert>
             </td>
           </tr>}
@@ -289,4 +311,4 @@ const RemoteDataTable = ({
   </div>);
 }
 
-export default RemoteDataTable;
+export { RemoteDataTable };

@@ -1,9 +1,10 @@
 import { Breadcrumb } from '@/components/ui/breadcrumb.tsx';
 import PageTitle from '@/components/ui/page-title.tsx';
+import { PageWrapper } from '@/components/ui/page-wrapper.tsx';
 
 export const Construction = () => {
   return (
-    <div className="h-full flex-1 flex-col space-y-4">
+    <PageWrapper>
       <Breadcrumb
         items={[
           { label: "Constructora", path: "/construction" },
@@ -13,6 +14,6 @@ export const Construction = () => {
       <div className="flex items-center justify-between space-y-2">
         <PageTitle title="Dashboard"/>
       </div>
-    </div>
+    </PageWrapper>
   );
 };
