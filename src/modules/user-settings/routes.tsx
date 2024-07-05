@@ -4,7 +4,7 @@ import { UserInfo } from '@/modules/user-settings/user-info.tsx';
 
 const menuItems = [
   {
-    title: "Cuenta",
+    title: "Información de usuario",
     path: "/user-settings",
   },
   {

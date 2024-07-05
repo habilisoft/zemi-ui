@@ -32,7 +32,7 @@ export function UnitRowActions({
           <span className="sr-only">Open menu</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[160px]">
+      <DropdownMenuContent align="end" className="w-full">
         {unit.state === 'AVAILABLE' && <DropdownMenuItem
           asChild>
           <Link to={`/construction/projects/${project?.id}/units/${unit.id}/reserve`}>

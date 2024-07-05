@@ -8,12 +8,20 @@ import { UsersService } from '@/services/users.service.ts';
 import { toast } from 'sonner';
 import { Messages } from '@/lib/constants.tsx';
 import ClosableAlert from '@/components/ui/closable-alert.tsx';
+import { PageWrapper } from '@/components/ui/page-wrapper.tsx';
+import { passwordValidation } from '@/lib/validations.ts';
+import { useCompoundStore } from '@/stores/compound-store.ts';
 
 export function ChangePassword() {
   const [sendingRequest, setSendingRequest] = useState(false);
   const navigate = useNavigate();
   const usersService = new UsersService();
   const [error, setError] = useState<string | null>(null);
+  const { updateAuthUserProperty } = useCompoundStore(
+    (state) => ({
+      updateAuthUserProperty: state.updateAuthUserProperty,
+    })
+  );
   const onSubmit = (data: Record<string, string | string []>) => {
     setSendingRequest(true);
     usersService.changePassword({
@@ -22,12 +30,13 @@ export function ChangePassword() {
     }).then(() => {
       navigate("/user-settings");
       toast.success("Contraseña cambiada exitosamente");
+      updateAuthUserProperty("changePasswordAtNextLogin", false);
     }).catch(({ response }) => {
       setError(response?.data?.message || Messages.UNEXPECTED_ERROR)
     }).finally(() => setSendingRequest(false));
   }
   return (
-    <div className="h-full flex-1 flex-col space-y-4">
+    <PageWrapper>
       <Breadcrumb
         items={[
           { label: "Ajustes de Usuario", path: "/user-settings" },
@@ -51,18 +60,14 @@ export function ChangePassword() {
               name: "currentPassword",
               label: "Contraseña actual",
               defaultValue: "",
-              validations: z
-                .string({ required_error: "Campo requerido" })
-                .min(6, { message: "Mínimo 6 caracteres" }),
+              validations: passwordValidation
             },
             {
               type: "password",
               name: "newPassword",
               label: "Nueva contraseña",
               defaultValue: "",
-              validations: z
-                .string({ required_error: "Campo requerido" })
-                .min(6, { message: "Mínimo 6 caracteres" }),
+              validations: passwordValidation,
             },
             {
               type: "password",
@@ -76,6 +81,6 @@ export function ChangePassword() {
           ]}/>
 
       </div>
-    </div>
+    </PageWrapper>
   );
 }

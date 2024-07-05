@@ -13,6 +13,7 @@ import { BuyerDetails } from '@/modules/construction/buyers/buyer-details.tsx';
 import { InitDownPaymentInstallment } from '@/modules/construction/payments/init-down-payment-installment.tsx';
 import { PaymentReceipt } from '@/modules/construction/payments/payment-receipt';
 import ListDownPaymentInstallments from '@/modules/construction/payments/list-down-payment-installments.tsx';
+import { Settings } from '@/modules/construction/settings';
 
 const menuItems = [
   {
@@ -40,6 +41,10 @@ const menuItems = [
         path: "/construction/payments/receipts",
       }
     ]
+  },
+  {
+    title: "Configuración",
+    path: "/construction/settings",
   }
 ];
 
@@ -50,6 +55,10 @@ export const constructionRoutes = {
     {
       index: true,
       element: <Construction />,
+    },
+    {
+      path: "settings",
+      element: <Settings/>
     },
     {
       path: "samples",

@@ -47,6 +47,10 @@
     @apply bg-gray-50;
 }
 
+.data-grid-table tr .selected {
+    @apply bg-blue-50 border-blue-500 !important;
+}
+
 .data-grid-table {
     @apply w-full divide-y divide-gray-200;
 }

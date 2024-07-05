@@ -42,6 +42,10 @@ export const RootLayout = () => {
     navigate('/company-settings/edit');
   }
 
+  if(authUser?.changePasswordAtNextLogin && window.location.pathname !== '/user-settings/change-password') {
+    navigate('/user-settings/change-password');
+  }
+
   if (!companyInfoLoaded) {
     return <PageLoader/>
   }

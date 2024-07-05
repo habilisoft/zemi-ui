@@ -11,6 +11,7 @@ import { DownPaymentInstallmentsService } from '@/services/down-payment-installm
 import { useParams } from 'react-router-dom';
 import { IDownPaymentInstallmentResponse } from '@/types';
 import Formats from '@/lib/formatters.ts';
+import { PageWrapper } from '@/components/ui/page-wrapper.tsx';
 
 function PaymentReceipt() {
   const contentToPrint = useRef(null);
@@ -46,7 +47,7 @@ function PaymentReceipt() {
   }, [installmentId]);
 
   return (
-    <div className="h-full flex-1 flex-col space-y-4">
+    <PageWrapper>
       <Breadcrumb
         items={[
           { label: "Pagos", path: "" },
@@ -121,7 +122,7 @@ function PaymentReceipt() {
           </div>
         </div>
       </div>
-    </div>
+    </PageWrapper>
   );
 
 }
