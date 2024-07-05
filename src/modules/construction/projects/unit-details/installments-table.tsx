@@ -59,7 +59,7 @@ export function InstallmentsTable(
           },
           {
             header: 'Monto',
-            field: 'payment',
+            field: 'amount',
             render: (payment: IPaymentResponse) => Formats.currency(payment.amount)
           },
           {

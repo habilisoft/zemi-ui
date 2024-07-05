@@ -9,14 +9,14 @@ import { Button } from '@/components/ui/button.tsx';
 import { FaPrint } from 'react-icons/fa6';
 import { DownPaymentInstallmentsService } from '@/services/down-payment-installments.service.ts';
 import { useParams } from 'react-router-dom';
-import { IDownPaymentInstallmentResponse } from '@/types';
+import {IDownPaymentInstallmentDetailedResponse} from '@/types';
 import Formats from '@/lib/formatters.ts';
 import { PageWrapper } from '@/components/ui/page-wrapper.tsx';
 
 function PaymentReceipt() {
   const contentToPrint = useRef(null);
   const downPaymentInstallmentService = new DownPaymentInstallmentsService();
-  const [installment, setInstallment] = useState({} as IDownPaymentInstallmentResponse);
+  const [installment, setInstallment] = useState({} as IDownPaymentInstallmentDetailedResponse);
   const { installmentId } = useParams();
   const handlePrint = useReactToPrint({
     documentTitle: "Print This Document",
@@ -83,30 +83,30 @@ function PaymentReceipt() {
               <div className="text-right">
                 <h1 className="text-white bg-blue-800 font-bold px-4">Recibo de Ingreso</h1>
                 <p>No.: <span className="text-red-900 font-bold">
-                  {Formats.receiptNumber(installment?.installment?.id)}
+                  {Formats.receiptNumber(installment?.id)}
                 </span></p>
-                <p>Fecha: {Formats.dateWithNames(installment?.installment?.date)}</p>
+                <p>Fecha: {Formats.dateWithNames(installment?.date)}</p>
               </div>
             </div>
             <div className="body mt-8 space-y-1">
               <p>
                 <span className="font-bold text-gray-700">Hemos recibido de: </span>
-                <span className="text-gray-500">{installment?.buyer?.name}</span>
+                <span className="text-gray-500">{installment?.downPayment?.buyer?.name}</span>
               </p>
               <p>
                 <span className="font-bold text-gray-700">La suma de: </span>
-                <span className="text-gray-500">{Formats.moneyToWords(installment?.installment?.payment?.amount)}</span>
+                <span className="text-gray-500">{Formats.moneyToWords(installment?.payment?.amount)}</span>
               </p>
               <p>
                 <span className="font-bold text-gray-700">Por concepto de: </span>
-                <span className="text-gray-500">{installment?.installment?.payment?.description}</span>
+                <span className="text-gray-500">{installment?.payment?.description}</span>
               </p>
             </div>
 
             <div>
               <p><span className="font-bold text-gray-700">Desglose del pago:</span></p>
               <div className="mb-3">
-                {installment?.installment?.payment?.paymentInformation?.paymentMethods.map((method, index) => (
+                {installment?.payment?.paymentInformation?.paymentMethods.map((method, index) => (
                   <div key={index} className="flex">
                     <span className="font-bold mr-2 text-gray-700">{Formats.paymentMethod(method.type)}:</span><span className="text-gray-500">{Formats.currency(method.amount)}</span>
 

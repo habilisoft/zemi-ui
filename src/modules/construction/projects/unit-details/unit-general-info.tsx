@@ -22,13 +22,13 @@ export default function UnitGeneralInfo(
             bg="gray"
             title="Valor">
             <span className="text-sm text-gray-900">
-              {Formats.currency(unit.unit.price?.value || unit.priceFromProject?.value)}
+              {Formats.currency(unit.price?.value || unit.project.pricePerUnit?.value)}
             </span>
           </FactRow>
           <FactRow
             title="Estado"
             bg="white">
-            <ProjectUnitState state={unit.unit.state} />
+            <ProjectUnitState state={unit.state} />
           </FactRow>
         </dl>
       </div>

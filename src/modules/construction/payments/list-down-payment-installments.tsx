@@ -29,15 +29,15 @@ function ListDownPaymentInstallments() {
             render: (_cell, row: IDownPaymentInstallmentResponse) => (
               <Link
                 className="link"
-                to={`/construction/payments/receipts/${row.installment.id}`}>
-                {Formats.receiptNumber(row.installment.id)}
+                to={`/construction/payments/receipts/${row.id}`}>
+                {Formats.receiptNumber(row.id)}
               </Link>
             )
           },
           {
             header: "Fecha",
             field: "installment",
-            render: (_cell, row: IDownPaymentInstallmentResponse) => Formats.dateWithNames(row.installment.date)
+            render: (_cell, row: IDownPaymentInstallmentResponse) => Formats.dateWithNames(row.date)
           },
           {
             header: "Comprador",
@@ -52,13 +52,13 @@ function ListDownPaymentInstallments() {
           {
             header: "Concepto",
             field: "installment",
-            render: (_cell, row: IDownPaymentInstallmentResponse) => row.installment.payment.description
+            render: (_cell, row: IDownPaymentInstallmentResponse) => row.payment.description
           },
           {
             header: "Monto",
             field: "installment",
             style: { textAlign: "right" },
-            render: (_cell, row: IDownPaymentInstallmentResponse) => Formats.currency(row.installment.payment.amount)
+            render: (_cell, row: IDownPaymentInstallmentResponse) => Formats.currency(row.payment.amount)
           },
         ]}
         style={{}}/>

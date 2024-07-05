@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { IDownPaymentInstallmentResponse } from '@/types';
+import {IDownPaymentInstallmentDetailedResponse} from '@/types';
 
 export class DownPaymentInstallmentsService {
   readonly endpoint: string;
@@ -14,7 +14,7 @@ export class DownPaymentInstallmentsService {
    *==================
    */
 
-  async getDownPaymentInstallment(id: string): Promise<IDownPaymentInstallmentResponse> {
+  async getDownPaymentInstallment(id: string): Promise<IDownPaymentInstallmentDetailedResponse> {
     try {
       const { data } = await axios.get(this.endpoint + "/" + id);
       return data;

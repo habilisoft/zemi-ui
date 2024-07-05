@@ -43,7 +43,7 @@ export function ReserveUnit() {
   const reserverUnit = (data: Record<string, string | string[] | object | number>) => {
     const requestData = getRequestData(data);
     setLoading(true);
-    projectService.reserveUnit(unitResponse.unit.name, requestData)
+    projectService.reserveUnit(unitResponse.name, requestData)
       .then((response ) => {
         toast.success('Unidad reservada correctamente');
         navigate(`/construction/payments/receipts/${response.installments[0].id}`);
@@ -81,7 +81,7 @@ export function ReserveUnit() {
           { label: "Proyectos", path: "/construction/projects" },
           { label: project?.name || "", path: `/construction/projects/${project?.id}/details` },
           { label: "Unidades" || "", path: `/construction/projects/${project?.id}/details?tab=units` },
-          { label: unitResponse?.unit?.name || "", path: `/construction/projects/${project?.id}/units/${unitResponse?.unit?.id}` },
+          { label: unitResponse?.name || "", path: `/construction/projects/${project?.id}/units/${unitResponse?.id}` },
           { label: "Reservar", path: "" }
         ]}
       />

@@ -52,10 +52,10 @@ export function DownPaymentInstallment() {
     const requestData = getRequestData(data);
 
     setLoading(true);
-    projectService.downPaymentInstallment(unitResponse?.unit?.name, requestData)
+    projectService.downPaymentInstallment(unitResponse?.name, requestData)
       .then((response: IDownPaymentInstallmentResponse) => {
         toast.success('Abono a inicial aplicado correctamente');
-        navigate(`/construction/payments/receipts/${response.installment.id}`);
+        navigate(`/construction/payments/receipts/${response.id}`);
       })
       .catch(({response}) => {
         setError(response?.data?.message || Messages.UNEXPECTED_ERROR);
@@ -89,18 +89,18 @@ export function DownPaymentInstallment() {
           { label: "Proyectos", path: "/construction/projects" },
           { label: project?.name || "", path: `/construction/projects/${project?.id}/details` },
           { label: "Unidades" || "", path: `/construction/projects/${project?.id}/details?tab=units` },
-          { label: unitResponse?.unit?.name || "", path: `/construction/projects/${project?.id}/units/${unitResponse?.unit?.id}` },
+          { label: unitResponse?.name || "", path: `/construction/projects/${project?.id}/units/${unitResponse?.id}` },
           { label: "Abono a inicial", path: "" }
         ]}
       />
 
-      <PageTitle title="Abono a Inicial" subtitle={unitResponse?.unit?.name}/>
+      <PageTitle title="Abono a Inicial" subtitle={unitResponse?.name}/>
 
       <div className="max-w-md mx-auto mt-8">
         <div className="mb-4">
           <ClosableAlert closable={false} color="info">
-            <p><strong>Monto Inicial: </strong> {Formatters.currency(unitResponse?.downPayment?.downPayment?.amount)}</p>
-            <p><strong>Balance:</strong> {Formatters.currency(unitResponse?.downPayment?.downPayment?.balance)}</p>
+            <p><strong>Monto Inicial: </strong> {Formatters.currency(unitResponse?.downPayment?.amount)}</p>
+            <p><strong>Balance:</strong> {Formatters.currency(unitResponse?.downPayment?.balance)}</p>
           </ClosableAlert>
         </div>
         {error && <ClosableAlert closable={false} color="danger">{error}</ClosableAlert>}
