@@ -2,7 +2,7 @@ import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { ProjectsService } from '@/services/projects.service.ts';
 import { useEffect, useState } from 'react';
 import { IProject } from '@/types';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Overlay from '@/components/overlay';
 import PageTitle from '@/components/ui/page-title.tsx';
 import ClosableAlert from '@/components/ui/closable-alert.tsx';
@@ -13,6 +13,8 @@ import { Plus } from 'lucide-react';
 import { Dialog } from '@/components/ui/dialog.tsx';
 import { Input } from '@/components/ui/input.tsx';
 import ProjectGeneralInfo from '@/modules/construction/projects/project-general-info';
+import { TabWrapper } from '@/components/tab-wrapper';
+import { PageWrapper } from '@/components/ui/page-wrapper.tsx';
 
 export function ProjectDetails() {
   const [loading, setLoading] = useState(false)
@@ -20,8 +22,6 @@ export function ProjectDetails() {
   const { projectId } = useParams<{ projectId: string }>();
   const [project, setProject] = useState<IProject>({ } as IProject);
   const projectsService = new ProjectsService(projectId);
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [selectedTab, setSelectedTab] = useState(searchParams.get("tab") || "details");
   const [dialogIsOpen, setDialogIsOpen] = useState(false);
   const [unitsToAdd, setUnitsToAdd] = useState(1);
   const navigate = useNavigate();
@@ -38,18 +38,11 @@ export function ProjectDetails() {
       });
   }, [])
 
-  useEffect(() => {
-    if (selectedTab) {
-      searchParams.set("tab", selectedTab);
-      setSearchParams(searchParams);
-    }
-  }, [selectedTab]);
-
   if (loading) return <Overlay show={true} text="Cargando..."/>;
   if (error) return <ClosableAlert color="danger">Error al cargar el proyecto</ClosableAlert>;
 
   return (
-    <div className="h-full flex-1 flex-col space-y-4">
+    <PageWrapper>
       <Dialog
         isOpen={dialogIsOpen}
         close={() => setDialogIsOpen(false)}
@@ -84,30 +77,34 @@ export function ProjectDetails() {
 
       </div>
 
-      <Tabs
-        onValueChange={(value) => setSelectedTab(value)}
-        defaultValue={selectedTab} className="w-full">
-        <div className="flex items-center justify-between space-y-2">
-          <TabsList>
-            <TabsTrigger value="details">Detalles</TabsTrigger>
-            <TabsTrigger value="units">Unidades</TabsTrigger>
-          </TabsList>
-          {selectedTab === 'units' && <Button
-            onClick={() => setDialogIsOpen(true)}
-            className="h-8">
-            <Plus className="size-4 mr-2"/> Agregar unidades
-          </Button>}
-        </div>
-        <TabsContent value="details">
-          <div className="gap-6">
-            <ProjectGeneralInfo project={project}/>
-            <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700"/>
+      <TabWrapper defaultTab="details">
+        {(selectedTab, setSelectedTab) => (
+        <Tabs
+          onValueChange={(value) => setSelectedTab(value)}
+          defaultValue={selectedTab} className="w-full">
+          <div className="flex items-center justify-between space-y-2">
+            <TabsList>
+              <TabsTrigger value="details">Detalles</TabsTrigger>
+              <TabsTrigger value="units">Unidades</TabsTrigger>
+            </TabsList>
+            {selectedTab === 'units' && <Button
+              onClick={() => setDialogIsOpen(true)}
+              className="h-8">
+              <Plus className="size-4 mr-2"/> Agregar unidades
+            </Button>}
           </div>
-        </TabsContent>
-        <TabsContent value="units">
-          <ProjectUnits project={project}/>
-        </TabsContent>
-      </Tabs>
-    </div>
+          <TabsContent value="details">
+            <div className="gap-6">
+              <ProjectGeneralInfo project={project}/>
+              <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700"/>
+            </div>
+          </TabsContent>
+          <TabsContent value="units">
+            <ProjectUnits project={project}/>
+          </TabsContent>
+        </Tabs>)}
+      </TabWrapper>
+
+    </PageWrapper>
 );
 }

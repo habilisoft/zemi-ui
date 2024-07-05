@@ -1,4 +1,4 @@
-import RemoteDataTable, { Column } from '@/components/ui/remote-data-table';
+import { Column, RemoteDataTable } from '@/components/ui/remote-data-table';
 import { IProject, IProjectUnit, IProjectUnitPrice } from '@/types';
 import { Link } from 'react-router-dom';
 import { ProjectUnitState } from '@/modules/construction/projects/components/project-unit-state';

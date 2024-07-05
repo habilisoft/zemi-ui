@@ -24,6 +24,7 @@ import { Receipt } from '@/modules/construction/payment-receipt/receipt.tsx';
 import { userSettingsRoutes } from '@/modules/user-settings';
 import { companySettingsRoutes } from '@/modules/company-settings';
 import { CompanyInfoProvider } from '@/context/company-context.tsx';
+import { accessControlRoutes } from '@/modules/access-control';
 
 
 axios.defaults.headers.common['TenantId'] = getSubdomain();
@@ -47,7 +48,8 @@ const router = createBrowserRouter([
       payrollRoutes,
       loansRoutes,
       userSettingsRoutes,
-      companySettingsRoutes
+      companySettingsRoutes,
+      accessControlRoutes
     ],
     errorElement: <div>Error inesperado</div>,
   },

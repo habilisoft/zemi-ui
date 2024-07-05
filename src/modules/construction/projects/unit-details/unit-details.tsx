@@ -17,6 +17,7 @@ import UnitGeneralInfo from '@/modules/construction/projects/unit-details/unit-g
 import { InstallmentsTable } from '@/modules/construction/projects/unit-details/installments-table';
 import Spinner from '@/components/ui/spinner';
 import ReservationAndDownPayment from '@/modules/construction/projects/unit-details/reservation-and-down-payment';
+import { PageWrapper } from '@/components/ui/page-wrapper.tsx';
 
 export function UnitDetails() {
   const [unit, setUnit] = useState<IUnitResponse>({} as IUnitResponse);
@@ -57,7 +58,7 @@ export function UnitDetails() {
   }, [selectedTab]);
 
   return (
-    <div className="h-full flex-1 flex-col space-y-4">
+    <PageWrapper>
       <Breadcrumb
         items={[
           { label: "Constructora", path: "/construction" },
@@ -108,6 +109,6 @@ export function UnitDetails() {
           <div>Documents</div>
         </TabsContent>
       </Tabs>
-    </div>
+    </PageWrapper>
   );
 }

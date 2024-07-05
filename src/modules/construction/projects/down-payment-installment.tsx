@@ -17,6 +17,7 @@ import { toast } from 'sonner';
 import ClosableAlert from '@/components/ui/closable-alert.tsx';
 import PageTitle from '@/components/ui/page-title.tsx';
 import Formatters from '@/lib/formatters.ts';
+import { PageWrapper } from '@/components/ui/page-wrapper.tsx';
 
 export function DownPaymentInstallment() {
   const [unitResponse, setUnitResponse] = useState<IUnitDetailResponse>({ } as IUnitDetailResponse );
@@ -81,7 +82,7 @@ export function DownPaymentInstallment() {
   }
 
   return (
-    <div className="h-full flex-1 flex-col space-y-4">
+    <PageWrapper>
       <Breadcrumb
         items={[
           { label: "Constructora", path: "/construction" },
@@ -145,6 +146,6 @@ export function DownPaymentInstallment() {
           ]}
         />
       </div>
-    </div>
+    </PageWrapper>
   );
 }

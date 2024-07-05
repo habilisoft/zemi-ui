@@ -10,6 +10,7 @@ import ClosableAlert from '@/components/ui/closable-alert.tsx';
 import PageTitle from '@/components/ui/page-title.tsx';
 import { useNavigate } from 'react-router-dom';
 import {toast} from 'sonner';
+import { PageWrapper } from '@/components/ui/page-wrapper.tsx';
 
 
 export function EditCompanyInfo() {
@@ -44,7 +45,7 @@ export function EditCompanyInfo() {
   }
 
   return (
-    <div className="h-full flex-1 flex-col space-y-4">
+    <PageWrapper>
       <Breadcrumb
         items={[
           { label: "Empresa", path: "/company-settings" },
@@ -122,6 +123,6 @@ export function EditCompanyInfo() {
             ]
           }/>
       </div>
-    </div>
+    </PageWrapper>
   );
 }
