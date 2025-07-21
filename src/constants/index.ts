@@ -1,4 +1,11 @@
-import { Book, Construction, DollarSign, Users } from "lucide-react";
+import {
+  Book,
+  Construction,
+  DollarSign,
+  Users,
+  Boxes,
+  BarChartBigIcon, BadgeDollarSign, HandCoins
+} from "lucide-react";
 
 export const MODULES = [
   {
@@ -21,4 +28,24 @@ export const MODULES = [
     icon: Construction,
     path: "/construction",
   },
+  {
+    title: "Catálogo de Productos",
+    icon: Boxes,
+    path: "/catalog",
+  },
+  {
+    title: "Ventas",
+    path: "/sales",
+    icon: BarChartBigIcon
+  },
+  {
+    title: "Rentas",
+    path: "/rents",
+    icon: HandCoins
+  },
+  {
+    title: "Configuración Fiscal",
+    path: "/fiscal-settings",
+    icon: BadgeDollarSign
+  }
 ];

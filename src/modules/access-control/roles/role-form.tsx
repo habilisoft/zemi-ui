@@ -11,14 +11,15 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Messages } from '@/lib/constants.tsx';
 import ClosableAlert from '@/components/ui/closable-alert.tsx';
+import { ModuleBadge } from '@/components/module-badge/module-badge.tsx';
 
 type Props = {
   selectedPermissions: string[];
 }
 
 function RoleForm({ selectedPermissions: perms = [] }: Props) {
-  const { permissions } = usePermissions("");
-  const [selectedPermissions, setSelectedPermissions] = useState<string[]>(perms);
+  const { permissions } = usePermissions();
+  const [selectedPermissions, setSelectedPermissions] = useState<[]>(perms as []);
   const [step, setStep] = useState(1);
   const [role, setRole] = useState({} as IRole);
   const roleService = new RolesService();
@@ -89,14 +90,14 @@ function RoleForm({ selectedPermissions: perms = [] }: Props) {
           <div className="gap-6 grid grid-cols-1 mt-6">
             <SimpleDataTable
               columns={[
-                { header: "Nombre", field: "name" },
-                { header: "Descripción", field: "description" },
-                { header: "Módulo", field: "module" }
+                { header: "Nombre", field: "description" },
+                { header: "Módulo", field: "module", render: (cell: string)=> <ModuleBadge module={cell}/> }
               ]}
-              setSelectedRecords={setSelectedPermissions}
+              idColumn="name"
+              setSelectedRecords={(records) => setSelectedPermissions(records as [])}
               selectedRecords={selectedPermissions}
-              style={{height: "300px"}}
-              records={permissions || []}/>
+              style={{ height: "calc(100vh - 450px)" }}
+              records={permissions as [] || []}/>
 
             <div className="flex items-center gap-4">
               <Button

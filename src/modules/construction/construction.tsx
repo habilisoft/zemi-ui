@@ -8,11 +8,11 @@ export const Construction = () => {
       <Breadcrumb
         items={[
           { label: "Constructora", path: "/construction" },
-          { label: "Dashboard", path: "/construction" },
+          { label: "Panel", path: "/construction" },
         ]}
       />
       <div className="flex items-center justify-between space-y-2">
-        <PageTitle title="Dashboard"/>
+        <PageTitle title="Panel"/>
       </div>
     </PageWrapper>
   );

@@ -7,14 +7,10 @@ import { IProject } from '@/types';
 import PageTitle from '@/components/ui/page-title.tsx';
 import { ProtectedContent } from '@/components/protected-content';
 import { PageWrapper } from '@/components/ui/page-wrapper.tsx';
-// import { useState } from "react";
-// import { useProjects } from "@/hooks/projects";
+import { NoDataPlaceholder } from '@/components/no-data-placeholder';
+import Empty from '@/assets/illustrations/empty-box.svg';
 
 export function Projects() {
-  // const [searchTerm, setSearchTerm] = useState("")
-  // const {projects, isLoading} = useProjects(searchTerm)
-
-  // if(isLoading) return null;
 
   const columns: Column[] = [
     {
@@ -52,6 +48,11 @@ export function Projects() {
         filters={[]}
         style={{ height: "calc(100vh - 350px)" }}
         searchFields={["name"]}
+        noDataPlaceholder={<NoDataPlaceholder
+          message="No hay proyectos"
+          buttonText="Crear proyecto"
+          onClick={() => {}}
+          illustration={Empty}/>}
         defaultPageSize={25}/>
     </PageWrapper>
   );

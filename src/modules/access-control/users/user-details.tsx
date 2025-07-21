@@ -3,8 +3,7 @@ import PageTitle from '@/components/ui/page-title.tsx';
 import { Link, useParams } from 'react-router-dom';
 import { TabWrapper } from '@/components/tab-wrapper';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.tsx';
-import { UsersService } from '@/services/users.service';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { IRole, IUser } from '@/types';
 import { FactRow } from '@/components/ui/fact-row.tsx';
 import { SimpleDataTable } from '@/components/ui/simple-data-table';
@@ -13,33 +12,27 @@ import { Button } from '@/components/ui/button.tsx';
 import { RemoveRoleFromUserModal } from '@/modules/access-control/roles/remove-role-from-user-modal.tsx';
 import { AssignRolesToUserModal } from '@/modules/access-control/users/assign-roles-to-user-modal.tsx';
 import { ResetPasswordModal } from '@/modules/access-control';
+import { useQuery } from '@apollo/client';
+import Spinner from '@/components/ui/spinner.tsx';
+import { GET_USER } from '@/queries.ts';
 
 export function UserDetails() {
-  const { userId } = useParams<{ userId: string }>();
-  const userService = new UsersService(userId);
-  const [user, setUser] = useState<Partial<IUser>>({});
+  const { username } = useParams<{ username: string }>();
   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
   const [showRemoveRoleModal, setShowRemoveRoleModal] = useState(false);
   const [showAssignRoleModal, setShowAssignRoleModal] = useState(false);
   const [showResetPasswordModal, setShowResetPasswordModal] = useState(false);
 
-  useEffect(() => {
-    loadUser();
-  }, []);
+  if(!username) return null;
 
-  function loadUser() {
-    userService.getUser()
-      .then((userData) => {
-        setUser(userData)
-        setSelectedRoles([]);
-      })
-      .catch((error) => {
-        console.error(`[UserDetails][useEffect]: ${error}`);
-      });
-  }
+  const { refetch, loading, data } = useQuery(GET_USER, {
+    variables: { username },
+  });
+
+  const user = data?.user as unknown as IUser;
 
   function removeUserFromRole(role: IRole) {
-    setSelectedRoles([role.id]);
+    setSelectedRoles([role.name]);
     setShowRemoveRoleModal(true);
   }
 
@@ -56,7 +49,7 @@ export function UserDetails() {
         onClose={(success) => {
           setShowRemoveRoleModal(false)
           if (success) {
-            loadUser();
+            refetch();
           }
         }}/>
       <AssignRolesToUserModal
@@ -65,7 +58,7 @@ export function UserDetails() {
         onClose={(success) => {
           setShowAssignRoleModal(false)
           if (success) {
-            loadUser();
+            refetch();
           }
         }}/>
       <PageWrapper>
@@ -77,10 +70,10 @@ export function UserDetails() {
           ]}
         />
         <div className="flex items-center justify-between space-y-2">
-          <PageTitle title={userId} subtitle="Usuarios"/>
+          <PageTitle title={username} subtitle="Usuarios"/>
         </div>
-
-        <TabWrapper defaultTab="details">
+        {loading && <Spinner/>}
+        {!loading && <TabWrapper defaultTab="details">
           {(selectedTab, setSelectedTab) => (
             <Tabs
               onValueChange={(value) => setSelectedTab(value)}
@@ -140,7 +133,7 @@ export function UserDetails() {
                       header: "Nombre",
                       field: "name",
                       render: (_cell, row: IRole) => <Link
-                        className="link" to={`/access-control/roles/${row.id}/details`}>
+                        className="link" to={`/access-control/roles/${row.name}/details`}>
                         {row.name}
                       </Link>
                     },
@@ -162,7 +155,7 @@ export function UserDetails() {
                       </Button>
                     }
                   ]}
-                  style={{}}
+                  style={{ height: "calc(100vh - 350px)" }}
                   records={user?.roles as [] || []}/>
               </TabsContent>
               <TabsContent value="access">
@@ -174,7 +167,7 @@ export function UserDetails() {
                 </Button>
               </TabsContent>
             </Tabs>)}
-        </TabWrapper>
+        </TabWrapper>}
       </PageWrapper>
     </>
   );

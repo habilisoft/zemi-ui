@@ -42,20 +42,20 @@ jobs:
           docker build . --file Dockerfile --tag $IMAGE
           docker push $IMAGE
         env:
-          IMAGE: 502154089745.dkr.ecr.us-east-1.amazonaws.com/alfil/web-ui:${{ steps.extract_branch.outputs.branch }}-${{github.run_number}}
+          IMAGE: 502154089745.dkr.ecr.us-east-1.amazonaws.com/zemi/web-ui:${{ steps.extract_branch.outputs.branch }}-${{github.run_number}}
       - name: Render Amazon ECS task definition
         id: render-web-container
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: ./.aws/task-definition.json
           container-name: web-ui
-          image: 502154089745.dkr.ecr.us-east-1.amazonaws.com/alfil/web-ui:${{ steps.extract_branch.outputs.branch }}-${{github.run_number}}
+          image: 502154089745.dkr.ecr.us-east-1.amazonaws.com/zemi/web-ui:${{ steps.extract_branch.outputs.branch }}-${{github.run_number}}
       - name: Deploy to Amazon ECS service
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
           task-definition: ${{ steps.render-web-container.outputs.task-definition }}
-          service: alfil-prod-web-ui-service
-          cluster: alfil-prod
+          service: zemi-prod-web-ui-service
+          cluster: zemi-prod
           wait-for-service-stability: true
       - name: Update UI Version
         if: ${{ false }}

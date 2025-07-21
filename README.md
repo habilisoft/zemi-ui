@@ -1,4 +1,4 @@
-# Alfil UI
+# Zemi UI
 
 ## Libraries for references
 

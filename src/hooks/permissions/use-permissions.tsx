@@ -1,17 +1,11 @@
-import { useQuery } from "@tanstack/react-query";
-import { PermissionsService } from '@/services/permissions.service';
+import { useQuery } from '@apollo/client';
+import { GET_PERMISSIONS } from '@/queries.ts';
 
-export function usePermissions(searchTerm: string) {
-  const permissionsService = new PermissionsService();
-
-  const { isLoading, data, refetch } = useQuery({
-    queryKey: ["permissions", searchTerm],
-    queryFn: () => permissionsService.getPermissions(),
-  });
-
+export function usePermissions() {
+  const { loading, data, refetch } = useQuery(GET_PERMISSIONS);
   return {
-    isLoading,
-    permissions: data,
+    loading,
+    permissions: data?.permissions,
     reload: refetch,
   };
 }

@@ -39,7 +39,7 @@ function UserCreated({
           <Label>Roles asignados</Label>
           <div className="flex items-center space-x-2">
             {user?.roles?.map((role) => (
-             role.name
+             role
             )).join(", ")}
           </div>
         </div>

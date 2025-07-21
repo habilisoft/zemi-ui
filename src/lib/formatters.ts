@@ -1,9 +1,11 @@
 import { Money } from '@/types';
+import { NcfTypes } from '@/lib/constants.tsx';
+import { format } from "date-fns";
 
 function currency(money: Money | undefined) {
   if (!money) return 'N/D';
   const { value, currency } = money;
-  if (value == undefined) return 'N/D';
+  if (!value) return 'N/D';
   return new Intl.NumberFormat('es-DO', {
     style: 'currency',
     currency
@@ -28,6 +30,27 @@ function dateWithNames(value: string | undefined) {
     year: 'numeric'
   });
 }
+
+function shortDate(value: Date) {
+  return format(value, 'MM/dd/yyyy');
+}
+
+function percentage(value: number) {
+  if(value < 1) {
+    return `${(value * 100).toFixed(2)}%`;
+  }
+  return `${value.toFixed(2)}%`;
+}
+
+function decimal(value: number) {
+  return parseFloat(value.toFixed(2));
+}
+
+const ncfSequence = (number: number, ncfType: string, series: string) => {
+  const numericValue = NcfTypes.find((t) => t.value === ncfType)?.numericValue || '';
+  const prefix = `${series}${numericValue}`;
+  return `${prefix}${number.toString().padStart(8, '0')}`;
+};
 
 function moneyToWords(money: Money) {
   if (!money) return 'N/D';
@@ -55,8 +78,8 @@ function moneyToWords(money: Money) {
   }
 
   const { currency, value } = money;
-  const integerPart = Math.floor(value);
-  const decimalPart = Math.round((value - integerPart) * 100);
+  const integerPart = Math.floor(value || 0);
+  const decimalPart = Math.round(((value || 0) - integerPart) * 100);
   const currencyWord = getCurrencyWord(currency);
 
   const integerWords = convertToWords(integerPart);
@@ -82,7 +105,11 @@ const Formats = {
   dateWithNames,
   moneyToWords,
   receiptNumber,
-  paymentMethod
+  paymentMethod,
+  percentage,
+  decimal,
+  ncfSequence,
+  shortDate
 }
 
 export default Formats;

@@ -81,7 +81,7 @@ interface Props extends IFormSchema {
 export function CompoundForm(props: Props) {
   const {
     inputs,
-    submitButtonText = "Enviar",
+    submitButtonText = "Guardar",
     cancelButtonText = "Cancelar",
     description,
     title,
@@ -154,6 +154,7 @@ export function CompoundForm(props: Props) {
         return (
           <FormControl>
             <Input
+
               placeholder={inputData.placeholder || ""}
               {...field}
               type={inputData.type}
@@ -182,6 +183,7 @@ export function CompoundForm(props: Props) {
               createModal={inputData?.remoteComboProps?.createModal || undefined}
               displayProperty={inputData.remoteComboProps?.displayProperty || ""}
               valueProperty={inputData.remoteComboProps?.valueProperty || ""}
+              addButtonText={inputData.remoteComboProps?.addButtonText}
               placeholder={inputData.placeholder || ""}/>
           </FormControl>
         )
@@ -386,7 +388,6 @@ export function CompoundForm(props: Props) {
 
       <Form {...form}>
         <form
-          onSubmit={form.handleSubmit(onSubmit)}
           className={cn("gap-6 grid", `grid-cols-${columns}`, {
             "mt-6": title || description,
           })}
@@ -430,7 +431,7 @@ export function CompoundForm(props: Props) {
               <Button
                 onClick={() => {
                   confirmCancel
-                    ? setAlertDialogIsOpen(true)
+                    ? (form.formState.isDirty ? setAlertDialogIsOpen(true) : onCancel())
                     : onCancel();
                 }}
                 variant="outline"
@@ -443,7 +444,8 @@ export function CompoundForm(props: Props) {
 
             <Button
               variant={submitButtonVariant}
-              type="submit"
+              type="button"
+              onClick={() => form.handleSubmit(onSubmit)()}
               disabled={sendingRequest}
               className={cn(submitButtonClassName)}
             >
@@ -463,10 +465,10 @@ export function CompoundForm(props: Props) {
             onCancel();
             setAlertDialogIsOpen(false);
           }}
-          title={alertDialogText || ""}
-          description={alertDialogDesc || ""}
-          acceptButtonText={alertAcceptButtonText}
-          cancelButtonText={alertCancelButtonText}
+          title={alertDialogText || "Confirmar"}
+          description={alertDialogDesc || "Estás seguro de cancelar la operación? Los datos introducidos no se guardarán."}
+          acceptButtonText={alertAcceptButtonText || "Si, estoy seguro"}
+          cancelButtonText={alertCancelButtonText || "Cancelar"}
         />
       )}
     </>

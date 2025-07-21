@@ -35,15 +35,17 @@ export const RootLayout = () => {
       LocalStorageKeys.REDIRECT_URL,
       window.location.pathname + window.location.search
     );
-    return <Navigate to="/auth/login"/>;
+    return <Navigate to="/login"/>;
   }
 
   if (companyInfoLoaded && !companyInfo && window.location.pathname !== '/company-settings/edit') {
-    navigate('/company-settings/edit');
+   navigate('/company-settings/edit');
+   return;
   }
 
   if(authUser?.changePasswordAtNextLogin && window.location.pathname !== '/user-settings/change-password') {
     navigate('/user-settings/change-password');
+    return ;
   }
 
   if (!companyInfoLoaded) {

@@ -6,9 +6,12 @@ import {
 } from "@/components/ui/popover";
 import { MODULES } from "@/constants";
 import { Grip } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import cn from "classnames";
+import "./styles.css";
 
 export const ModulesDropdown = () => {
+  const location = useLocation();
   return (
     <Popover>
       <PopoverTrigger className="flex items-center font-bold gap-2 text-white hover:text-amber-400">
@@ -25,7 +28,7 @@ export const ModulesDropdown = () => {
             <PopoverClose asChild key={i}>
               <Link
                 to={path}
-                className="flex items-center gap-3 px-2 py-3 rounded-md transition hover:bg-neutral-800 hover:text-amber-400"
+                className={cn('module-menu-item', { active : location.pathname.startsWith(path)})}
               >
                 <Icon className="size-5" />
                 {title}

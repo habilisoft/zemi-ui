@@ -32,9 +32,9 @@ function UserRolesCell(
               sideOffset={5}>
               <h3 className="text-sm font-bold text-gray-700">Roles asignados al usuario</h3>
               <ul className="list-disc list-inside">
-                {user.roles.map(role => <li key={role.id}>
+                {user.roles && user.roles.map(role => <li key={role.name}>
                   <Link
-                    to={`/access-control/roles/${role.id}/details`}
+                    to={`/access-control/roles/${role.name}/details`}
                     className="link text-xs">{role.name}
                   </Link></li>)}
               </ul>

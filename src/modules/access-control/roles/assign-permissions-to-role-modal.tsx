@@ -1,5 +1,5 @@
 import { Dialog } from '@/components/ui/dialog.tsx';
-import { IRole } from '@/types';
+import { IPermission, IRole } from '@/types';
 import ClosableAlert from '@/components/ui/closable-alert.tsx';
 import { cn } from '@/lib/utils.ts';
 import { Button } from '@/components/ui/button.tsx';
@@ -15,7 +15,7 @@ import { ModuleBadge } from '@/components/module-badge/module-badge.tsx';
 type Props = {
   open: boolean;
   onClose: (success: boolean) => void;
-  role: Partial<IRole>
+  role: Partial<IRole>,
 }
 
 function AssignPermissionsToRoleModal({
@@ -26,9 +26,9 @@ function AssignPermissionsToRoleModal({
 
   const [selectedRecords, setSelectedRecords] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
-  const roleService = new RolesService(role.id);
+  const roleService = new RolesService(role.name);
   const [error, setError] = useState(false);
-  const { permissions } = usePermissions("");
+  const { permissions } = usePermissions();
 
   function handleClose() {
     onClose(false);
@@ -83,13 +83,14 @@ function AssignPermissionsToRoleModal({
 
       <SimpleDataTable
         columns={[
-          { header: "Permiso", field: "name" },
+          { header: "Permiso", field: "description" },
           { header: "Módulo", field: "module", render: (cell: string)=> <ModuleBadge module={cell}/>}
         ]}
+        idColumn="name"
         selectedRecords={selectedRecords}
         setSelectedRecords={setSelectedRecords}
         style={{height: "300px"}}
-        records={permissions || []}/>
+        records={permissions ?  permissions.filter( (p : IPermission) => !role.permissions?.some((p2: IPermission) => p2.name === p.name)) as [] : []}/>
 
       <div className="flex justify-end gap-4">
         <Button

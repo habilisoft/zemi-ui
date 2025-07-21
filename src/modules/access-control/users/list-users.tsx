@@ -3,7 +3,7 @@ import PageTitle from '@/components/ui/page-title.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import { Link } from 'react-router-dom';
 import { Plus } from 'lucide-react';
-import { Column, RemoteDataTable } from '@/components/ui/remote-data-table';
+import { Column } from '@/components/ui/remote-data-table';
 import { IUser } from '@/types';
 import { UserRolesCell } from '@/modules/access-control/components';
 import { PageWrapper } from '@/components/ui/page-wrapper.tsx';
@@ -11,6 +11,10 @@ import { UserRowActions } from '@/modules/access-control/users/user-row-actions.
 import { ResetPasswordModal } from '@/modules/access-control';
 import { useMemo, useState } from 'react';
 import { DeleteUserModal } from '@/modules/access-control/users/delete-user-modal.tsx';
+import { GraphQLRemoteDataTable } from '@/components/ui/graphql-remote-data-table';
+import { gql } from '@/graphql';
+import { GET_USERS_WITH_ROLES } from '@/queries.ts';
+
 
 function ListUsers() {
   const [resetPasswordModalOpen, setResetPasswordModalOpen] = useState(false);
@@ -79,15 +83,13 @@ function ListUsers() {
             </Link>
           </Button>
         </div>
-        <RemoteDataTable
-          path="/api/v1/users"
+        <GraphQLRemoteDataTable
+          query={GET_USERS_WITH_ROLES}
+          collectionName="users"
           columns={columns}
-          placeholder="Buscar por nombre"
           gridChanged={false}
           reload={false}
-          filters={[]}
           style={{ height: "calc(100vh - 350px)" }}
-          searchFields={["name"]}
           defaultPageSize={25}/>
       </PageWrapper>
     </>

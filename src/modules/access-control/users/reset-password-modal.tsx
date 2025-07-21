@@ -74,8 +74,8 @@ function ResetPasswordModal({
             type: 'radioGroup',
             defaultValue: 'auto',
             options: [
-              { label: 'Generar automáticamente', value: 'auto' },
-              { label: 'Ingresar nueva contraseña', value: 'manual' }
+              { label: 'Contraseña generada automáticamente', value: 'auto' },
+              { label: 'Contraseña personalizada', value: 'manual' }
             ],
             validations: z.enum(["auto", "manual"], {
               required_error: "You need to select a option",

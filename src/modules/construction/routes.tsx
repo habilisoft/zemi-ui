@@ -17,7 +17,7 @@ import { Settings } from '@/modules/construction/settings';
 
 const menuItems = [
   {
-    title: "Dashboard",
+    title: "Panel",
     path: "/construction",
   },
   {

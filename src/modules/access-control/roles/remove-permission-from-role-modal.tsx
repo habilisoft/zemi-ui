@@ -18,7 +18,7 @@ function RemovePermissionFromRole({
                                    selectedPermissions,
                                    role
                                  }: Props) {
-  const roleService = new RolesService(role?.id);
+  const roleService = new RolesService(role?.name);
   const [error, setError] = useState(false);
 
   function handleDelete() {

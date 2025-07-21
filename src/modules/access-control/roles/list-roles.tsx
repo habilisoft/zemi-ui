@@ -3,13 +3,15 @@ import PageTitle from '@/components/ui/page-title.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import { Link } from 'react-router-dom';
 import { Plus } from 'lucide-react';
-import { Column, RemoteDataTable } from '@/components/ui/remote-data-table';
+import { Column } from '@/components/ui/remote-data-table';
 import { IProject, IRole } from '@/types';
 import { PageWrapper } from '@/components/ui/page-wrapper.tsx';
 import { RoleRowActions } from '@/modules/access-control/roles/role-row-actions.tsx';
 import { AssignRoleToUsersModal } from '@/modules/access-control';
 import { useMemo, useState } from 'react';
 import { DeleteRoleModal } from '@/modules/access-control/roles/delete-role-modal.tsx';
+import { GraphQLRemoteDataTable } from '@/components/ui/graphql-remote-data-table';
+import { GET_ROLES } from '@/queries.ts';
 
 function ListRoles() {
   const [showAssignRoleToUsersModal, setShowAssignRoleToUsersModal] = useState(false);
@@ -31,7 +33,7 @@ function ListRoles() {
       "header": "Nombre",
       "field": "name",
       "render": (_cell, row: IProject) => <Link className="link"
-                                                to={`/access-control/roles/${row.id}/details`}>{row.name}</Link>
+                                                to={`/access-control/roles/${row.name}/details`}>{row.name}</Link>
     },
     {
       "header": "Descripción",
@@ -71,15 +73,14 @@ function ListRoles() {
             </Link>
           </Button>
         </div>
-        <RemoteDataTable
-          path="/api/v1/roles"
+        <GraphQLRemoteDataTable
+          query={GET_ROLES}
+          collectionName="roles"
           columns={columns}
           placeholder="Buscar por nombre"
           gridChanged={false}
           reload={false}
-          filters={[]}
           style={{ height: "calc(100vh - 350px)" }}
-          searchFields={["name"]}
           defaultPageSize={25}/>
       </PageWrapper>
     </>

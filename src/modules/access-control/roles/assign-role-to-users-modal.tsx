@@ -16,7 +16,7 @@ function AssignRoleToUsersModal({
 
   return (
     <Dialog
-      title={<span>Asignar role <span className="underline decoration-dashed underline-offset-4">{role?.name}</span> a usuarios</span>}
+      title={<span>Asignar rol <span className="underline decoration-dashed underline-offset-4">{role?.name}</span> a usuarios</span>}
       isOpen={open}
       close={onClose}
     >

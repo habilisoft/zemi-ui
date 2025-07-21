@@ -3,6 +3,8 @@ import './styles.css';
 import { Checkbox } from '@/components/ui/checkbox.tsx';
 import cn from 'classnames';
 import { CheckedState } from '@radix-ui/react-checkbox';
+import { Search } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 export type Column = {
   header?: string,
@@ -23,8 +25,9 @@ type Props = {
   cardProps?: Record<string, unknown>,
   onRowClick?(record: Record<string, string | number>): void,
   style: Record<string, string> | undefined,
-  records: [],
+  records: [] | undefined | null,
   setSelectedRecords?(records: string[]): void,
+  isSearchable?: boolean,
 }
 
 const SimpleDataTable = ({
@@ -32,18 +35,22 @@ const SimpleDataTable = ({
                            columns,
                            cardProps,
                            onRowClick,
-                           records,
+                           records = [],
                            setSelectedRecords,
                            selectedRecords = [],
                            idColumn = "id",
                            style = {},
+                           isSearchable = false,
+                           placeholder
                          }: Props) => {
 
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [filteredRecords, setFilteredRecords] = useState<never[]>(records || []);
 
   function handleSelect(selected: string) {
-    if(!setSelectedRecords) return;
+    if (!setSelectedRecords) return;
     if (selected == "all") {
-      setSelectedRecords(records.map((record: Record<string, string | number>) => record[idColumn] as string));
+      setSelectedRecords((records || []).map((record: Record<string, string | number>) => record[idColumn] as string));
       return
     }
     if (selected == "none") {
@@ -59,7 +66,39 @@ const SimpleDataTable = ({
     }
   }
 
+  useEffect(() => {
+    if (!isSearchable) {
+      return
+    }
+    if (searchTerm === "") {
+      setFilteredRecords((records || []));
+      return
+    }
+    const filtered = (records || []).filter((record: Record<string, string | number>) => {
+      return columns.some((column) => {
+        return record[column.field].toString().toLowerCase().includes(searchTerm.toLowerCase())
+      })
+    });
+    setFilteredRecords(filtered);
+  }, [searchTerm]);
+
   return (<div className="shadow ring-1 ring-black ring-opacity-5 md:rounded-lg" data-toggle="lists" {...cardProps}>
+
+    {isSearchable && <div className="align-items-center">
+      <div className="flex-1 min-w-0 ">
+        <label htmlFor="search" className="sr-only">Buscar</label>
+        <div className="relative rounded-md shadow-sm">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+             <Search className="h-5 w-5 text-gray-400"/>
+          </div>
+          <input type="search"
+                 value={searchTerm}
+                 onChange={(e) => setSearchTerm(e.target.value)}
+                 className="focus:outline-none focus:border-blue-500 block w-full pl-10 sm:text-sm border-gray-300 rounded-md py-3 pr-4"
+                 placeholder={placeholder}/>
+        </div>
+      </div>
+    </div>}
 
     <div className="table-responsive overflow-auto data-grid"
          style={style}
@@ -69,7 +108,7 @@ const SimpleDataTable = ({
         <tr>
           {setSelectedRecords && <th style={{ width: "40px" }}>
             <Checkbox
-              checked={selectedRecords?.length === records.length}
+              checked={selectedRecords?.length === (records || []).length}
               onCheckedChange={(checked: CheckedState) => {
                 if (checked) {
                   handleSelect("all")
@@ -84,7 +123,7 @@ const SimpleDataTable = ({
         </tr>
         </thead>
         <tbody>
-        {records && records.map((record, i) => {
+        {filteredRecords && filteredRecords.map((record, i) => {
           const isSelected = selectedRecords?.includes(record[idColumn]);
           return (<tr key={i}
                       className={cn({ "selected": isSelected })}
@@ -118,8 +157,9 @@ const SimpleDataTable = ({
           </tr>)
         })}
         {(!records || records.length < 1) && <tr>
-          <td style={{ padding: 0 }} colSpan={columns.length + (setSelectedRecords ? 1 : 0)}><ClosableAlert closable={false}
-                                                                                                  color="warning">No se
+          <td style={{ padding: 0 }} colSpan={columns.length + (setSelectedRecords ? 1 : 0)}><ClosableAlert
+            closable={false}
+            color="warning">No se
             encontraron registros</ClosableAlert></td>
         </tr>}
         </tbody>
@@ -130,8 +170,8 @@ const SimpleDataTable = ({
          aria-label="Pagination">
       <div className="block">
         <p className="text-sm text-gray-700">
-          <span className="font-medium">{records.length}</span>
-          &nbsp; registros
+          <span className="font-medium">{(records || []).length}</span>
+          &nbsp; registro{(records || []).length > 1 ? "s" : ""}
         </p>
       </div>
     </nav>

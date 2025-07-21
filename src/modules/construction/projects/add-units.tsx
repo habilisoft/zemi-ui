@@ -18,7 +18,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Label } from '@/components/ui/label.tsx';
 import ClosableAlert from '@/components/ui/closable-alert.tsx';
 import { toast } from 'sonner';
-import { ConfirmCancelButton } from '@/components/ui/confirm-cancel-button.tsx';
+import { ConfirmCancelButton } from '@/components/confirm-cancel-button';
 import { MoneyValidationSchema } from '@/lib/validations.ts';
 import { PageWrapper } from '@/components/ui/page-wrapper.tsx';
 
@@ -143,11 +143,11 @@ export function AddUnits() {
           <div className="space-x-2">
             <ConfirmCancelButton
               disabled={savingUnits}
-              alertDialogTitle="Confirmar"
-              alertDialogText="¿Estás seguro de cancelar la creación de unidades?"
-              alertAcceptButtonText="Si, estoy seguro"
-              onCancel={() => navigate(`/construction/projects/${projectId}/details`)}
-              confirmCancel/>
+              title="Confirmar"
+              description="¿Estás seguro de cancelar la creación de unidades?"
+              acceptButtonText="Si, estoy seguro"
+              action={() => navigate(`/construction/projects/${projectId}/details`)}
+              confirm/>
             <Button
               type="submit">
               Guardar Unidades

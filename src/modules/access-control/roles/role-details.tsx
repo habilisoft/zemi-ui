@@ -3,42 +3,50 @@ import PageTitle from '@/components/ui/page-title.tsx';
 import { useParams } from 'react-router-dom';
 import { TabWrapper } from '@/components/tab-wrapper';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.tsx';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { IPermission, IRole } from '@/types';
 import { FactRow } from '@/components/ui/fact-row.tsx';
 import { SimpleDataTable } from '@/components/ui/simple-data-table';
 import { PageWrapper } from '@/components/ui/page-wrapper.tsx';
 import { Button } from '@/components/ui/button.tsx';
-import { RolesService } from '@/services/roles.service.ts';
 import { AssignPermissionsToRoleModal } from '@/modules/access-control/roles/assign-permissions-to-role-modal.tsx';
 import { RemovePermissionFromRole } from '@/modules/access-control/roles/remove-permission-from-role-modal.tsx';
 import { ModuleBadge } from '@/components/module-badge/module-badge.tsx';
+import { gql } from '@/graphql/gql';
+import { useQuery } from '@apollo/client';
+import Spinner from '@/components/ui/spinner.tsx';
 
 export function RoleDetails() {
-  const { roleId } = useParams<{ roleId: string }>();
-  const roleService = new RolesService(roleId);
-  const [role, setRole] = useState<Partial<IRole>>({});
+  const { name } = useParams<{ name: string }>();
   const [selectedPermissions, setSelectedPermissions] = useState<string[]>([]);
   const [showRemovePermissionModal, setShowRemovePermissionModal] = useState(false);
   const [showAssignPermissionModal, setShowAssignPermissionModal] = useState(false);
 
-  useEffect(() => {
-    loadUser();
-  }, []);
+  if(!name) return null;
 
-  function loadUser() {
-    roleService.getRole()
-      .then((roleData) => {
-        setRole(roleData)
-        setSelectedPermissions([]);
-      })
-      .catch((error) => {
-        console.error(`[UserDetails][useEffect]: ${error}`);
-      });
-  }
+  const GET_ROLE = gql(/* GraphQL */`
+    query GetRole($name: String!) {
+      role(name: $name) {
+        name
+        description
+        systemRole
+        permissions {
+          name
+          description
+          module
+        }
+      }
+    }
+  `);
+
+  const { data, refetch, loading } = useQuery(GET_ROLE, {
+    variables: { name },
+  });
+
+  const role = data?.role as unknown as IRole;
 
   function removePermissionFromRole(perm: IPermission) {
-    setSelectedPermissions([perm.id]);
+    setSelectedPermissions([perm.name]);
     setShowRemovePermissionModal(true);
   }
 
@@ -46,21 +54,21 @@ export function RoleDetails() {
     <>
       <RemovePermissionFromRole
         open={showRemovePermissionModal}
-        role={role}
+        role={role || {}}
         selectedPermissions={selectedPermissions}
         onClose={(success) => {
           setShowRemovePermissionModal(false)
           if (success) {
-            loadUser();
+            refetch();
           }
         }}/>
       <AssignPermissionsToRoleModal
-        role={role}
+        role={role || {}}
         open={showAssignPermissionModal}
         onClose={(success) => {
           setShowAssignPermissionModal(false)
           if (success) {
-            loadUser();
+            refetch();
           }
         }}/>
       <PageWrapper>
@@ -68,14 +76,15 @@ export function RoleDetails() {
           items={[
             { label: "Usuarios y Permisos", path: "/access-control" },
             { label: "Roles", path: "/access-control/roles" },
-            { label: role?.name || "", path: `/access-control/users/${role?.name}/details` },
+            { label: name, path: `/access-control/users/${name}/details` },
           ]}
         />
         <div className="flex items-center justify-between space-y-2">
-          <PageTitle title={role.name} subtitle="Roles"/>
+          <PageTitle title={name} subtitle="Roles"/>
         </div>
 
-        <TabWrapper defaultTab="details">
+        {loading && <Spinner/>}
+        {!loading && <TabWrapper defaultTab="details">
           {(selectedTab, setSelectedTab) => (
             <Tabs
               onValueChange={(value) => setSelectedTab(value)}
@@ -116,7 +125,7 @@ export function RoleDetails() {
                     </FactRow>
                     <FactRow
                       bg="white"
-                      title="Usuario">
+                      title="Descripción">
                     <span className="text-sm text-gray-900">
                       {role?.description}
                     </span>
@@ -128,14 +137,10 @@ export function RoleDetails() {
                 <SimpleDataTable
                   setSelectedRecords={setSelectedPermissions}
                   selectedRecords={selectedPermissions}
-                  idColumn="id"
+                  idColumn="name"
                   columns={[
                     {
-                      header: "Nombre",
-                      field: "name",
-                    },
-                    {
-                      header: "Descripción",
+                      header: "Permiso",
                       field: "description"
                     },
                     {
@@ -161,7 +166,7 @@ export function RoleDetails() {
                   records={role?.permissions as [] || []}/>
               </TabsContent>}
             </Tabs>)}
-        </TabWrapper>
+        </TabWrapper>}
       </PageWrapper>
     </>
   );

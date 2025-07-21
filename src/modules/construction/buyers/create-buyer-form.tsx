@@ -1,23 +1,16 @@
 import { CompoundForm } from '@/components/ui/compound-form.tsx';
 import { z } from 'zod';
 import { BuyersService } from '@/services/buyers.service';
-import { IBuyer } from '@/types';
+import { IBuyer, ReusableFormProps } from '@/types';
 import { Messages } from '@/lib/constants.tsx';
 import { useState } from 'react';
 import ClosableAlert from '@/components/ui/closable-alert.tsx';
-
-interface Props {
-  handleSuccess: (data: Record<string, string> | undefined) => void;
-  confirmCancel: boolean;
-  onCancel: () => void;
-}
-
 export function CreateBuyerForm(
   {
     handleSuccess,
     confirmCancel,
     onCancel,
-  }: Props
+  }: ReusableFormProps
 ) {
 
   const [error, setError] = useState<string | null>(null);

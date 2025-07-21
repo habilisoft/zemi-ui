@@ -10,5 +10,11 @@ const passwordValidation = z
     .string({ required_error: "Campo requerido" })
     .min(6, { message: "Mínimo 6 caracteres" });
 
+const positiveNumber = z.preprocess(
+  (args) => (args === '' ? undefined : args),
+  z.coerce
+    .number({ invalid_type_error: 'Ingrese un valor válido' })
+    .positive('Ingrese un valor mayor que cero'));
 
-export { MoneyValidationSchema, passwordValidation }
+
+export { MoneyValidationSchema, passwordValidation, positiveNumber }

@@ -11,6 +11,8 @@ import { RemoteDataTable } from '@/components/ui/remote-data-table';
 import { UsersService } from '@/services/users.service.ts';
 import { passwordValidation } from '@/lib/validations.ts';
 import { cn, randomPassword } from '@/lib/utils.ts';
+import { GraphQLRemoteDataTable } from '@/components/ui/graphql-remote-data-table';
+import { GET_ROLES } from '@/queries.ts';
 
 type Props = {
   selectedRoles: string[];
@@ -56,7 +58,7 @@ function UserForm({ selectedRoles: roles = [], onSuccess }: Props) {
       .then(( userCreated ) => {
         setSaving(false);
         toast.success("Usuario creado exitosamente");
-        onSuccess({...userCreated, password: user.password});
+        onSuccess({...request, password: user.password});
       })
       .catch(({ response }) => {
         setError(response?.data?.message || Messages.UNEXPECTED_ERROR);
@@ -106,8 +108,8 @@ function UserForm({ selectedRoles: roles = [], onSuccess }: Props) {
                 type: 'radioGroup',
                 defaultValue: 'auto',
                 options: [
-                  { label: 'Generar automáticamente', value: 'auto' },
-                  { label: 'Ingresar nueva contraseña', value: 'manual' }
+                  { label: 'Contraseña generada automáticamente', value: 'auto' },
+                  { label: 'Contraseña personalizada', value: 'manual' }
                 ],
                 validations: z.enum(["auto", "manual"], {
                   required_error: "You need to select a option",
@@ -157,8 +159,9 @@ function UserForm({ selectedRoles: roles = [], onSuccess }: Props) {
             </ClosableAlert>
           )}
           <div className="gap-6 grid grid-cols-1 mt-2">
-            <RemoteDataTable
-              path="/api/v1/roles"
+            <GraphQLRemoteDataTable
+              query={GET_ROLES}
+              collectionName="roles"
               columns={[
                 { header: "Nombre", field: "name" },
                 { header: "Descripción", field: "description" },
@@ -167,7 +170,9 @@ function UserForm({ selectedRoles: roles = [], onSuccess }: Props) {
               style={{height: "300px"}}
               selected={selectedRoles}
               onSelect={onSelect}
+              idColumn="name"
               defaultPageSize={25}/>
+
             <div className="flex items-center gap-4">
               <Button
                 disabled={saving}
@@ -184,7 +189,6 @@ function UserForm({ selectedRoles: roles = [], onSuccess }: Props) {
               </Button>
             </div>
           </div>
-
         </div>
       }
     </div>

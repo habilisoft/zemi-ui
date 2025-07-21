@@ -27,7 +27,7 @@ export function Buyers() {
         ]}
       />
       <div className="flex items-center justify-between space-y-2">
-        <PageTitle title="Clientes" subtitle="Listado de Clientes"/>
+        <PageTitle title="Clientes"/>
         <Button asChild>
           <Link to="new">
             <Plus className="size-4 mr-2"/> Nuevo Cliente

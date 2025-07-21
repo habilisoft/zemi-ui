@@ -24,8 +24,8 @@ export function ExchangeRate() {
   const [sources, setSources] = useState<Record<string, string>[]>([]);
 
   useEffect(() => {
-   refresh();
-   loadSources();
+   //refresh();
+   //loadSources();
   }, []);
 
   function loadSources() {

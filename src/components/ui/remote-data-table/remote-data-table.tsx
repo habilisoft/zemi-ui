@@ -1,7 +1,7 @@
 import {
   useState,
   useEffect,
-  ChangeEvent, MutableRefObject
+  ChangeEvent, MutableRefObject, ReactNode, JSX
 } from "react";
 import { Search } from "lucide-react";
 import InfiniteScroll from 'react-infinite-scroll-component';
@@ -20,7 +20,7 @@ export type Column = {
   header?: string,
   style?: Record<string, unknown>,
   width?: string,
-  render?(cell: unknown, row: Record<string, unknown> | unknown): string | number | JSX.Element,
+  render?(cell: unknown, row: Record<string, unknown> | unknown): string | number | ReactNode,
   onClick?(cell: unknown, record: Record<string, string | number>): void,
   field: string
 }
@@ -46,7 +46,8 @@ type Props = {
   defaultPageSize: number,
   onSelect?(record: string): void,
   selected?: string[],
-  idColumn?: string
+  idColumn?: string,
+  noDataPlaceholder?: JSX.Element | undefined
 }
 
 type Pagination = {
@@ -77,6 +78,7 @@ const RemoteDataTable = ({
                            onSelect,
                            selected = [],
                            idColumn = "id",
+                           noDataPlaceholder
                          }: Props) => {
   const [pagination, setPagination] = useState<Pagination>({
     page: 0,
@@ -87,28 +89,7 @@ const RemoteDataTable = ({
   const [records, setRecords] = useState<[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [error, setError] = useState(undefined);
-
-  /* const filterChange = (e) => {
-
-    let state = this.state;f
-    state.filters[e.target.name] = e.target.value;
-    state.pageable.page = 0;
-
-    if (filterTimeout !== "undefined") {
-      clearTimeout(filterTimeout);
-    }
-    const ft = setTimeout(() => {
-      search();
-    }, 500);
-
-    setFilterTimeout(ft);
-
-  }; */
-
-  /* const handleSelection = (e) => {
-    this.props.handleSelection(e);
-    this.props.close();
-  } */
+  const [firstLoad, setFirstLoad] = useState(true);
 
   const search = () => {
     let query = "?";
@@ -153,6 +134,7 @@ const RemoteDataTable = ({
       })
       .finally(() => {
         setBusy(false)
+        setFirstLoad(false);
       });
   };
 
@@ -190,23 +172,17 @@ const RemoteDataTable = ({
     setRecords([])
   }, [gridChanged])
 
+  if (noDataPlaceholder && firstLoad) {
+    return <Spinner/>
+  }
+
+  if (noDataPlaceholder && !firstLoad && records.length < 1) {
+    return noDataPlaceholder;
+  }
+
   return (<div className="shadow ring-1 ring-black ring-opacity-5 md:rounded-lg" data-toggle="lists" {...cardProps}>
 
     {isSearchable && <div className="align-items-center">
-      { /* <form className="row align-items-center">
-            <div className="col-auto pr-0">
-              {busy
-                ? <Spinner size="sm" className="text-muted"/>
-                : <span className="fe fe-search text-muted"/>}
-            </div>
-            <div className="col">
-              <input onChange={searchTermChange} type="search"
-                // eslint-disable-next-line
-                     autoFocus
-                     className="form-control form-control-flush search"
-                     placeholder={placeholder}/>
-            </div>
-          </form> */}
       <div className="flex-1 min-w-0 ">
         <label htmlFor="search" className="sr-only">Buscar</label>
         <div className="relative rounded-md shadow-sm">
@@ -221,14 +197,6 @@ const RemoteDataTable = ({
         </div>
       </div>
     </div>}
-
-    {/*    {(filters && filters.length) > 0 && <div className="p-2 flex space-x-1">
-      {filters.map((f,i) => <FilterTag key={i}
-                                       value={f.displayValue}
-                                       label={f.displayLabel}
-                                       remove={()=>clearFilters && clearFilters(f)}/>)}
-      </div>}*/}
-
     <div className="table-responsive overflow-auto data-grid"
          style={style}
          id="grid-container">
@@ -253,13 +221,13 @@ const RemoteDataTable = ({
             const isSelected = selected?.includes(record[idColumn]);
             return (<tr key={i}
                         style={{ cursor: (typeof onRowClick === "function" || typeof onSelect === 'function') ? "pointer" : "" }}
-                        className={cn({"selected": isSelected})}
+                        className={cn({ "selected": isSelected })}
                         onClick={() => {
                           if (typeof onRowClick === "function") {
                             onRowClick(record)
                             return;
                           }
-                          if(typeof onSelect === 'function') {
+                          if (typeof onSelect === 'function') {
                             onSelect(record[idColumn])
                           }
                         }}>
@@ -284,12 +252,14 @@ const RemoteDataTable = ({
           })}
 
           {(!busy && !error && (!records || records.length < 1)) && <tr>
-            <td style={{ padding: 0 }} colSpan={columns.length + (onSelect ? 1 : 0)}><ClosableAlert closable={false} color="warning">No se
+            <td style={{ padding: 0 }} colSpan={columns.length + (onSelect ? 1 : 0)}><ClosableAlert closable={false}
+                                                                                                    color="warning">No
+              se
               encontraron registros</ClosableAlert></td>
           </tr>}
           {(!busy && error) && <tr>
-            <td style={{ padding: 0 }} colSpan={columns.length + (onSelect ? 1 : 0) }><ClosableAlert closable={false}
-                                                                               color="danger">{error}</ClosableAlert>
+            <td style={{ padding: 0 }} colSpan={columns.length + (onSelect ? 1 : 0)}><ClosableAlert closable={false}
+                                                                                                    color="danger">{error}</ClosableAlert>
             </td>
           </tr>}
           </tbody>

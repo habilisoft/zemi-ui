@@ -48,6 +48,7 @@ export interface ShowCondition {
 }
 
 export interface IInputFormSchema {
+  autoFocus?: boolean;
   label: string;
   addOn?: string;
   showIf?: ShowCondition[];
@@ -73,6 +74,7 @@ export interface IInputFormSchema {
     valueProperty: string;
     createModal: React.ComponentType<DialogProps>;
     selectedValue?: Record<string, string> | undefined;
+    addButtonText?: string;
   }
   defaultValue: string | number | string[] | null | Money;
   validations:
@@ -98,10 +100,10 @@ export interface IFormSchema {
 export interface IUser {
   name: string;
   username: string;
-  profileImageUrl: string;
-  permissions: string[];
+  profileImageUrl?: string;
+  permissions?: string[];
   roles: IRole[],
-  changePasswordAtNextLogin: boolean;
+  changePasswordAtNextLogin?: boolean;
 }
 
 export interface ICreateUserRequest {
@@ -121,10 +123,9 @@ export interface IUserCreated {
 }
 
 export interface IRole {
-  id: string;
   name: string;
   description: string
-  permissions: string[];
+  permissions: IPermission[];
   systemRole: boolean;
 }
 
@@ -208,7 +209,7 @@ export interface IProjectUnitPrice {
 }
 
 export interface Money {
-  value: number;
+  value: number | undefined;
   currency: string;
 }
 
@@ -236,6 +237,7 @@ export interface IPaymentMethod {
   amount: Money;
   type?: "CARD" | "CASH" | "TRANSFER" | "CHECK";
 }
+
 export interface DownPaymentInstallmentRequest {
   payment: {
     paymentMethods: IPaymentMethod []
@@ -324,6 +326,7 @@ export interface IDownPaymentInstallmentResponse {
   balance: Money;
   payment: IPaymentResponse;
 }
+
 export interface IDownPaymentInstallmentDetailedResponse {
   id: number;
   date: string;
@@ -343,4 +346,147 @@ export interface IExchangeRateResponse {
   from: string,
   to: string,
   lastUpdate: string
+}
+
+export interface ICreateProductRequest {
+  name: string;
+  description: string;
+  categoryId: number;
+  isService: boolean;
+}
+
+export interface ICreateRentRequest {
+  customerId: number;
+}
+
+export interface ICreateCategoryRequest {
+  name: string;
+  description: string;
+}
+
+export interface IInvoice {
+  id: number;
+  number: string;
+  date: string;
+  dueDate: string;
+  total: Money;
+  state: "DRAFT" | "PAID" | "CANCELLED";
+  customer: IBuyer;
+  items: IInvoiceItem[];
+}
+
+export interface IInvoiceItem {
+  id: number;
+  product: IProduct;
+  quantity: number;
+  price: Money;
+}
+
+export interface IProduct {
+  id: number;
+  name: string;
+  description: string;
+  stock: number;
+  sku: string;
+}
+
+export interface IPageRequest {
+  first: number,
+  after: string,
+  last: number,
+  before: string
+}
+
+export interface IPageInfo {
+  startCursor: string;
+  endCursor: string;
+  hasPreviousPage: boolean;
+  hasNextPage: boolean;
+}
+
+export interface IEdge<T> {
+  node: T;
+  cursor: string;
+}
+
+export interface ICustomer {
+  id: number;
+  name: string;
+  phoneNumbers: string[]
+  emailAddress: string;
+  type: 'PERSON' | 'BUSINESS';
+  accountsReceivable: AccountReceivableDetail;
+  fiscalSettings: IFiscalSettings
+  address: IAddress[]
+  priceList: IPriceList
+}
+
+export interface IPriceList {
+  id: number;
+  name: string;
+}
+
+export interface IRegisterCustomerRequest {
+  id: number;
+  name: string;
+  phoneNumbers: string[]
+  emailAddress: string;
+  type: 'PERSON' | 'BUSINESS';
+  address: IAddress[]
+  rnc: string | undefined
+}
+
+
+export interface AccountReceivableDetail {
+  creditLimit: number;
+}
+
+export interface IFiscalSettings {
+  ncfType: string;
+}
+
+export interface IAddress {
+  street: string;
+  city: string;
+  zipCode: string;
+}
+
+export interface ReusableFormProps {
+  handleSuccess: (data: Record<string, string> | undefined) => void;
+  confirmCancel?: boolean;
+  onCancel: () => void;
+}
+
+export interface IMakeSaleRequest {
+  documentId: string;
+  customerId: number;
+  products: IMakeSaleProduct[]
+}
+
+export interface IMakeSaleProduct {
+  productId: number;
+  quantity: number;
+  price: number
+}
+
+export interface INcfType {
+  value: 'FINAL_CONSUMER' | 'FISCAL_CREDIT' | 'GUBERNATORIAL' | 'SPECIAL',
+  displayName: string
+  numericValue: string
+}
+
+export interface INcfSequenceRequest {
+  series: 'B';
+  ncfType: INcfType['value'],
+  start: number;
+  end: number;
+  expirationDate: Date;
+}
+
+export interface ISale {
+  id: { sequence: string; document: string };
+  ncf: string;
+  date: Date;
+  customer: ICustomer;
+  total: Money;
 }

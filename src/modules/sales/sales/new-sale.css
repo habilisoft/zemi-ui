@@ -1,0 +1,7 @@
+.new-sale-table {
+    @apply min-w-full divide-y divide-gray-200
+}
+
+.new-sale-table th {
+    @apply pl-6 py-3 text-xs font-medium text-gray-500 uppercase
+}

@@ -5,16 +5,22 @@ import classNames from "classnames";
 
 type SpinnerType = {
   color?: Color,
-  className?: string
+  className?: string,
+  sizeClass?: string
 }
 
 enum Color {
   DEFAULT = "#2564eb",
   WHITE = "white",
-  YELLOW = "#fbbf24"
+  YELLOW = "#fbbf24",
+  GRAY = "gray"
 }
 
-const Spinner : React.FC<SpinnerType> = ({ color = Color.DEFAULT, className = "" }) => <CgSpinner color={color} className={classNames("animate-spin h-6 w-6", className)}/>;
+const Spinner : React.FC<SpinnerType> = (
+  { color = Color.YELLOW,
+    className = "",
+    sizeClass = "h-7 w-7"
+  }) => <CgSpinner color={color} className={classNames("animate-spin", className, sizeClass)}/>;
 
 export default Spinner;
 export { Color };

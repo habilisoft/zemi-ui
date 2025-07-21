@@ -2,7 +2,7 @@ import { BaseLayout } from '@/layouts';
 
 const menuItems = [
   {
-    title: "Dashboard",
+    title: "Panel",
     path: "/accounting",
   }]
 

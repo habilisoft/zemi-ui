@@ -22,6 +22,7 @@ interface Props {
   selectedValue?: Record<string, string | number | undefined> | undefined;
   placeholder: string;
   createModal?: ComponentType<DialogProps>;
+  addButtonText?: string;
 }
 
 export function RemoteComboBox(
@@ -33,6 +34,7 @@ export function RemoteComboBox(
     selectedValue,
     handleSelect,
     createModal,
+    addButtonText = "Agregar nuevo"
   }: Props,
 ) {
   const [data, setData] = useState<Record<string, string>[]>([]);
@@ -48,11 +50,9 @@ export function RemoteComboBox(
   }, []);
 
   const search = async (value: string) => {
-    if (value) {
-      endpoint = endpoint + `?${displayProperty}=${value}`;
-    }
+    let uri = value ? endpoint + `?${displayProperty}=${value}` : endpoint;
     try {
-      const { data } = await axios.get(endpoint);
+      const { data } = await axios.get(uri);
       setData(data?.content || []);
     } catch (error) {
       console.error(error);
@@ -125,7 +125,7 @@ export function RemoteComboBox(
                     variant="link"
                     className="text-primary text-center text-blue-700 underline font-bold"
                   >
-                    Agregar nuevo
+                    {addButtonText}
                   </Button>
                 </CommandItem>}
               </CommandList>

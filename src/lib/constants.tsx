@@ -1,3 +1,5 @@
+import { INcfType } from '@/types';
+
 export const LocalStorageKeys = {
   CURRENT_WORKSPACE: "c_w",
   REDIRECT_URL: "r_u",
@@ -13,3 +15,26 @@ export const LocalStorageKeys = {
 export const Messages = {
   UNEXPECTED_ERROR: "Se ha producido un error inesperado. Por favor contacte soporte técnico"
 }
+
+export const NcfTypes: INcfType[] = [
+  {
+    value: "FINAL_CONSUMER",
+    displayName: "Consumidor Final",
+    numericValue: "01"
+  },
+  {
+    value: "FISCAL_CREDIT",
+    displayName: "Crédito Fiscal",
+    numericValue: "02"
+  },
+  {
+    value: "GUBERNATORIAL",
+    displayName: "Gubernamental",
+    numericValue: "14"
+  },
+  {
+    value: "SPECIAL",
+    displayName: "Especial",
+    numericValue: "15"
+  }
+]

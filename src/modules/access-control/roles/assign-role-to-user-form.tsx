@@ -9,6 +9,8 @@ import ClosableAlert from '@/components/ui/closable-alert.tsx';
 import { RolesService } from '@/services/roles.service.ts';
 import { Messages } from '@/lib/constants.tsx';
 import { toast } from 'sonner';
+import { GraphQLRemoteDataTable } from '@/components/ui/graphql-remote-data-table';
+import { GET_USERS } from '@/queries.ts';
 
 interface Props {
   role?: IRole;
@@ -29,7 +31,7 @@ const columns: Column[] = [
 function AssignRoleToUserForm( { role, onSuccess }: Props) {
   const [selectedRecords, setSelectedRecords] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
-  const roleService = new RolesService(role?.id);
+  const roleService = new RolesService(role?.name);
   const [error, setError] = useState(false);
 
   function handleSelect(selected: string) {
@@ -77,18 +79,17 @@ function AssignRoleToUserForm( { role, onSuccess }: Props) {
           </ClosableAlert>
         )}
       </div>
-      <RemoteDataTable
-        path="/api/v1/users"
-        searchFields={["username", "name"]}
+      <GraphQLRemoteDataTable
+        query={GET_USERS}
+        collectionName="users"
         columns={columns}
         gridChanged={false}
         style={{ height: "350px" }}
-        filters={[]}
         idColumn="username"
+        filters={[]}
         selected={selectedRecords}
         onSelect={handleSelect}
         defaultPageSize={30}/>
-
       <div className="flex justify-end gap-4">
           <Button
             onClick={onSuccess}

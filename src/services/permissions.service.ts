@@ -4,7 +4,7 @@ export class PermissionsService {
   readonly permissions_endpoint: string;
 
   constructor() {
-    this.permissions_endpoint = `/api/v1/permissions`;
+    this.permissions_endpoint = `/api/v1/users/permissions`;
   }
 
   async getPermissions() {

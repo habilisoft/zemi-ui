@@ -89,7 +89,7 @@ const ClosableAlert: React.FC<Type> = ({
   }, [progress]);
 
 
-  return <div className={`bg-${colorClass}-50`}>
+  return <div className={`bg-${colorClass}-50 mb-4`}>
     {autoClose && <div style={{width: `${progress}%`}} className={`h-1 bg-${colorClass}-600 transition-all`}/>}
     <div className={` rounded-md border-${colorClass}-600 p-4 ${className}`}>
       <div className="flex">

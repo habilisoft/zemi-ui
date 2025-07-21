@@ -22,7 +22,7 @@ export const accessControlRoutes = {
       element: <ListUsers/>,
     },
     {
-      path: "users/:userId/details",
+      path: "users/:username/details",
       element: <UserDetails/>
     },
     {
@@ -38,7 +38,7 @@ export const accessControlRoutes = {
       element: <CreateUser/>
     },
     {
-      path: "roles/:roleId/details",
+      path: "roles/:name/details",
       element: <RoleDetails/>
     }
   ],
